@@ -1,0 +1,303 @@
+/* ==========================================================================
+   PadhaiHub - Claymorphic Soft 3D Theme Styles
+   ========================================================================== */
+
+/* --- CSS Variables / Color Palette --- */
+:root {
+  --bg-gradient-top: #e0e9e1;
+  --bg-gradient-bottom: #f2ebe1;
+  --card-bg: #eaf1eb;
+  --card-shadow-light: #ffffff;
+  --card-shadow-dark: #b8c7bb;
+  --text-dark: #123524;
+  --text-muted: #5e7e6f;
+  
+  --emerald-main: #0f5132;
+  --emerald-gradient: linear-gradient(135deg, #115e3b, #093822);
+  --orange-main: #f0833a;
+  --orange-gradient: linear-gradient(135deg, #f39248, #d96f27);
+  
+  --field-bg: #e6ede7;
+  --circle-bg: #f5faf6;
+}
+
+/* --- Global Reset & Page Layout --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--bg-gradient-top) 0%, var(--bg-gradient-bottom) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 20px;
+}
+
+/* --- Background Floating Clay Orbs --- */
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.orb-1 {
+  width: 280px;
+  height: 280px;
+  top: -60px;
+  left: -80px;
+  background: radial-gradient(circle at 30% 30%, #f7dcc4, #e29f6d);
+  box-shadow: 12px 18px 30px rgba(180, 110, 60, 0.15);
+  opacity: 0.8;
+}
+
+.orb-2 {
+  width: 340px;
+  height: 340px;
+  bottom: -100px;
+  right: -100px;
+  background: radial-gradient(circle at 30% 30%, #a2d2bd, #0a4d31);
+  box-shadow: 15px 20px 35px rgba(10, 77, 49, 0.2);
+  opacity: 0.6;
+}
+
+.orb-3 {
+  width: 140px;
+  height: 140px;
+  top: 40%;
+  right: 10%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, #d2dfd5);
+  box-shadow: 8px 12px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Main Layout Container --- */
+.container {
+  width: 100%;
+  max-width: 440px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- Brand Header --- */
+.brand-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.logo-badge {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  background: var(--emerald-gradient);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 
+    6px 6px 14px rgba(15, 81, 50, 0.25),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.brand-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+}
+
+.brand-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* --- Outer Soft 3D Card (Matching Notebook Frame) --- */
+.login-card {
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: 40px;
+  padding: 36px 32px;
+  box-shadow: 
+    16px 20px 35px var(--card-shadow-dark),
+    -12px -12px 28px var(--card-shadow-light),
+    inset 2px 2px 3px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- Form Row Layout (Circle + Input) --- */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* --- Left 3D Circle Icons --- */
+.icon-circle-btn {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 50%;
+  background: var(--circle-bg);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--emerald-main);
+  box-shadow: 
+    5px 5px 10px var(--card-shadow-dark),
+    -4px -4px 8px var(--card-shadow-light),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.icon-circle-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.icon-circle-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* --- Neumorphic Inset Input Field --- */
+.input-wrapper {
+  flex: 1;
+  background: var(--field-bg);
+  border-radius: 26px;
+  padding: 4px 20px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  box-shadow: 
+    inset 4px 4px 8px #becfbf,
+    inset -4px -4px 8px #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.input-wrapper input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.input-wrapper input::placeholder {
+  color: var(--text-muted);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* --- Fetch OTP Button Row --- */
+.fetch-otp-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -6px;
+  margin-bottom: -6px;
+}
+
+.fetch-otp-btn {
+  background: var(--emerald-gradient);
+  color: #ffffff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 
+    4px 5px 10px rgba(15, 81, 50, 0.25),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.fetch-otp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 8px 14px rgba(15, 81, 50, 0.35);
+}
+
+.fetch-otp-btn.sent {
+  background: linear-gradient(135deg, #2b7853, #154d33);
+}
+
+/* --- Bottom Actions Row (login? & Submit) --- */
+.bottom-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-left: 8px;
+}
+
+.login-question-link {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--emerald-main);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.login-question-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* --- Orange 3D Submit Button --- */
+.submit-btn {
+  background: var(--orange-gradient);
+  color: #ffffff;
+  border: none;
+  padding: 12px 36px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 
+    6px 8px 16px rgba(217, 111, 39, 0.35),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 8px 12px 20px rgba(217, 111, 39, 0.45);
+}
+
+.submit-btn:active {
+  transform: translateY(1px);
+  box-shadow: 3px 4px 8px rgba(217, 111, 39, 0.3);
+}
+
+/* Responsive Tweak for Small Screens */
+@media (max-width: 400px) {
+  .login-card {
+    padding: 24px 18px;
+  }
+  
+  .form-row {
+    gap: 10px;
+  }
+}

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PadhaiHub - Branch Subjects</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="subjects.css">
+</head>
+<body>
+
+  <!-- Floating Background Clay Orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Main Outer Container -->
+  <div class="container">
+
+    <!-- Header Bar with Back Button & Active Branch Identifier -->
+    <header class="top-header">
+      <button type="button" class="back-btn" onclick="handleGoBack()" aria-label="Go Back">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clip-rule="evenodd" />
+        </svg>
+      </button>
+
+      <div class="branch-badge">
+        <span class="branch-icon" id="branchIcon">💻</span>
+        <div class="branch-info">
+          <h1 class="branch-title" id="branchTitle">CSE Syllabus</h1>
+          <p class="branch-subtitle" id="branchSubtitle">Computer Science & Engineering</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Branch Switcher Selector Pills -->
+    <div class="branch-pills-bar">
+      <button class="pill-btn active" onclick="switchBranch('CSE')">CSE</button>
+      <button class="pill-btn" onclick="switchBranch('ME')">ME</button>
+      <button class="pill-btn" onclick="switchBranch('ECE')">ECE</button>
+      <button class="pill-btn" onclick="switchBranch('Robotics')">Robotics</button>
+      <button class="pill-btn" onclick="switchBranch('Maths')">Maths</button>
+      <button class="pill-btn" onclick="switchBranch('Physics')">Physics</button>
+      <button class="pill-btn" onclick="switchBranch('EE')">EE</button>
+      <button class="pill-btn" onclick="switchBranch('Civil')">Civil</button>
+      <button class="pill-btn" onclick="switchBranch('BioTech')">BioTech</button>
+    </div>
+
+    <!-- Main Content Container for Subjects -->
+    <main class="subjects-card" id="subjectsContent">
+      <!-- Content populated dynamically by JavaScript -->
+    </main>
+
+  </div>
+
+  <!-- Interactive Script -->
+  <script>
+    // Database of subjects across all 9 branches
+    const branchData = {
+      CSE: {
+        title: "CSE Syllabus",
+        subtitle: "Computer Science & Engineering",
+        icon: "💻",
+        years: [
+          {
+            year: "Year 1 (Sem 1 & 2)",
+            subjects: [
+              "Mathematics I & II",
+              "Physics (Semiconductor Physics)",
+              "Chemistry",
+              "English / Professional Communication",
+              "Basic Electrical Engineering",
+              "Engineering Graphics / Drawing",
+              "Programming for Problem Solving (C)",
+              "Workshop & Related Labs"
+            ]
+          },
+          {
+            year: "Year 2 (Sem 3 & 4)",
+            subjects: [
+              "Data Structures and Algorithms",
+              "Object-Oriented Programming (C++/Java)",
+              "Digital Electronics / Digital Logic Design",
+              "Discrete Mathematics",
+              "Computer Organization and Architecture",
+              "Database Management Systems",
+              "Operating Systems",
+              "Theory of Computation / TOC",
+              "Probability and Statistics",
+              "Environmental Studies"
+            ]
+          },
+          {
+            year: "Year 3 (Sem 5 & 6)",
+            subjects: [
+              "Design and Analysis of Algorithms",
+              "Computer Networks / Data Comm.",
+              "Software Engineering",
+              "Compiler Design",
+              "Microprocessors and Interfacing",
+              "Web Technologies",
+              "Artificial Intelligence",
+              "Computer Graphics",
+              "Information Security / Cryptography",
+              "Departmental Electives"
+            ]
+          },
+          {
+            year: "Year 4 (Sem 7 & 8)",
+            subjects: [
+              "Machine Learning",
+              "Cloud Computing",
+              "Big Data Analytics",
+              "Data Mining",
+              "Distributed Systems",
+              "Natural Language Processing",
+              "Digital Image Processing",
+              "Internet of Things (IoT)",
+              "Open Electives",
+              "Industrial Training & Major Project"
+            ]
+          }
+        ]
+      },
+      ME: {
+        title: "ME Syllabus",
+        subtitle: "Mechanical Engineering",
+        icon: "⚙️",
+        years: [
+          { year: "Year 1", subjects: ["Engineering Mathematics", "Engineering Physics", "Basics of Civil & Mech", "Engineering Graphics", "Workshop Practice"] },
+          { year: "Year 2", subjects: ["Thermodynamics", "Fluid Mechanics", "Strength of Materials", "Kinematics of Machines", "Manufacturing Technology"] },
+          { year: "Year 3", subjects: ["Dynamics of Machinery", "Heat & Mass Transfer", "Design of Machine Elements", "IC Engines", "CAD / CAM"] },
+          { year: "Year 4", subjects: ["Power Plant Engineering", "Refrigeration & AC", "Automobile Engineering", "Industrial Engineering", "Major Project"] }
+        ]
+      },
+      ECE: {
+        title: "ECE Syllabus",
+        subtitle: "Electronics & Communication",
+        icon: "⚡",
+        years: [
+          { year: "Year 1", subjects: ["Mathematics I & II", "Applied Physics", "Basic Electronics", "C Programming", "Engineering Mechanics"] },
+          { year: "Year 2", subjects: ["Electronic Devices & Circuits", "Network Analysis", "Signals & Systems", "Digital Signal Processing", "Analog Communication"] },
+          { year: "Year 3", subjects: ["Digital Communication", "Microcontrollers & Embedded Systems", "VLSI Design", "Antenna & Wave Propagation", "Control Systems"] },
+          { year: "Year 4", subjects: ["Wireless Networks", "Optical Communication", "Embedded Systems", "Satellite Comm.", "Major Project"] }
+        ]
+      },
+      Robotics: {
+        title: "Robotics Syllabus",
+        subtitle: "Robotics & Automation",
+        icon: "🤖",
+        years: [
+          { year: "Year 1", subjects: ["Engineering Maths", "Physics for Robotics", "Basics of Electronics", "C++ Programming", "Engineering Graphics"] },
+          { year: "Year 2", subjects: ["Sensors & Transducers", "Kinematics of Robots", "Microcontrollers", "Control Systems Theory", "Mechatronics"] },
+          { year: "Year 3", subjects: ["Robot Dynamics & Control", "Machine Vision", "PLC & Automation", "Embedded Systems", "AI in Robotics"] },
+          { year: "Year 4", subjects: ["Autonomous Systems", "ROS (Robot Operating System)", "Drone Technology", "Industrial Robotics", "Capstone Project"] }
+        ]
+      },
+      Maths: {
+        title: "Maths Syllabus",
+        subtitle: "Mathematics & Computing",
+        icon: "📐",
+        years: [
+          { year: "Year 1", subjects: ["Calculus & Linear Algebra", "Differential Equations", "Physics", "Computer Fundamentals", "Communication Skills"] },
+          { year: "Year 2", subjects: ["Real Analysis", "Abstract Algebra", "Probability & Stochastic Processes", "Data Structures", "Numerical Methods"] },
+          { year: "Year 3", subjects: ["Complex Analysis", "Discrete Mathematics", "Optimization Techniques", "Operations Research", "Financial Mathematics"] },
+          { year: "Year 4", subjects: ["Functional Analysis", "Machine Learning Maths", "Cryptography", "Graph Theory", "Research Project"] }
+        ]
+      },
+      Physics: {
+        title: "Physics Syllabus",
+        subtitle: "Engineering Physics",
+        icon: "⚛️",
+        years: [
+          { year: "Year 1", subjects: ["Mechanics", "Electromagnetism", "Mathematics I", "Basic Chemistry", "Computer Programming"] },
+          { year: "Year 2", subjects: ["Quantum Mechanics", "Thermodynamics & Statistical Mechanics", "Optics & Photonics", "Mathematical Physics", "Solid State Physics"] },
+          { year: "Year 3", subjects: ["Nuclear Physics", "Atomic & Molecular Physics", "Electrodynamics", "Nanotechnology", "Laser Physics"] },
+          { year: "Year 4", subjects: ["Particle Physics", "Quantum Computing", "Material Science", "Astrophysics", "Major Research Project"] }
+        ]
+      },
+      EE: {
+        title: "EE Syllabus",
+        subtitle: "Electrical Engineering",
+        icon: "🔌",
+        years: [
+          { year: "Year 1", subjects: ["Mathematics I & II", "Engineering Chemistry", "Basic Electrical", "Engineering Mechanics", "Computer Fundamentals"] },
+          { year: "Year 2", subjects: ["Electrical Circuit Analysis", "Electrical Machines I", "Electromagnetic Fields", "Analog Electronics", "Power Systems I"] },
+          { year: "Year 3", subjects: ["Power Electronics", "Electrical Machines II", "Control Systems", "Power Systems II", "Microprocessors"] },
+          { year: "Year 4", subjects: ["High Voltage Engineering", "Smart Grid Technologies", "Renewable Energy Systems", "Electric Vehicles", "Major Project"] }
+        ]
+      },
+      Civil: {
+        title: "Civil Syllabus",
+        subtitle: "Civil Engineering",
+        icon: "🏗️",
+        years: [
+          { year: "Year 1", subjects: ["Engineering Mathematics", "Engineering Chemistry", "Basic Civil & Mech", "Engineering Physics", "Environmental Studies"] },
+          { year: "Year 2", subjects: ["Building Materials", "Surveying", "Mechanics of Solids", "Fluid Mechanics", "Structural Analysis I"] },
+          { year: "Year 3", subjects: ["Concrete Technology", "Geotechnical Engineering", "Transportation Engg.", "Hydraulics", "Design of Steel Structures"] },
+          { year: "Year 4", subjects: ["Structural Analysis II", "Environmental Engineering", "Construction Management", "Earthquake Engg.", "Major Project"] }
+        ]
+      },
+      BioTech: {
+        title: "BioTech Syllabus",
+        subtitle: "Biotechnology Engineering",
+        icon: "🧬",
+        years: [
+          { year: "Year 1", subjects: ["Engineering Maths", "Biochemistry", "Basics of Biology", "C Programming", "Organic Chemistry"] },
+          { year: "Year 2", subjects: ["Microbiology", "Cell Biology", "Genetics", "Molecular Biology", "Bioprocess Engineering"] },
+          { year: "Year 3", subjects: ["Recombinant DNA Technology", "Bioinformatics", "Immunology", "Plant & Animal Biotech", "Enzyme Technology"] },
+          { year: "Year 4", subjects: ["Biomedical Engineering", "Genomics & Proteomics", "Biopharmaceutical Technology", "Biosafety & Ethics", "Research Project"] }
+        ]
+      }
+    };
+
+    function renderBranch(code) {
+      const data = branchData[code] || branchData.CSE;
+
+      // Update header details
+      document.getElementById('branchIcon').innerText = data.icon;
+      document.getElementById('branchTitle').innerText = data.title;
+      document.getElementById('branchSubtitle').innerText = data.subtitle;
+
+      // Build subjects HTML block
+      let html = '';
+      data.years.forEach(yearGroup => {
+        html += `
+          <div class="year-block">
+            <div class="year-heading">${yearGroup.year}</div>
+            <div class="subjects-grid">
+        `;
+        yearGroup.subjects.forEach(subject => {
+          html += `
+            <div class="subject-card" onclick="openSubject('${subject}')">
+              <div class="subject-icon-bullet">📖</div>
+              <div class="subject-name">${subject}</div>
+            </div>
+          `;
+        });
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('subjectsContent').innerHTML = html;
+    }
+
+    function switchBranch(code) {
+      // Update active state of pill buttons
+      const pills = document.querySelectorAll('.pill-btn');
+      pills.forEach(pill => {
+        if (pill.innerText.trim() === code) {
+          pill.classList.add('active');
+        } else {
+          pill.classList.remove('active');
+        }
+      });
+
+      renderBranch(code);
+    }
+
+    function handleGoBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'home.html';
+      }
+    }
+
+    function openSubject(subjectName) {
+      alert("Opening notes & study materials for: " + subjectName);
+    }
+
+    // Initialize with CSE on load or from URL parameters
+    window.onload = function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const branchParam = urlParams.get('branch');
+      if (branchParam && branchData[branchParam.toUpperCase()]) {
+        switchBranch(branchParam.toUpperCase());
+      } else {
+        renderBranch('CSE');
+      }
+    };
+  </script>
+</body>
+</html>

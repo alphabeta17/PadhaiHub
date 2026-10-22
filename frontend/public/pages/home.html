@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PadhaiHub - Home</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+
+  <!-- Floating Background Clay Orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Slide-out Navigation Drawer -->
+  <div class="nav-overlay" id="navOverlay" onclick="toggleNav()"></div>
+  <nav class="side-drawer" id="sideDrawer">
+    <div class="drawer-header">
+      <div class="drawer-brand">PadhaiHub</div>
+      <button class="close-drawer-btn" onclick="toggleNav()">×</button>
+    </div>
+    <ul class="drawer-links">
+      <li><a href="home.html">🏠 Home Dashboard</a></li>
+      <li><a href="details.html">👤 Student Profile</a></li>
+      <li><a href="#">📚 Saved Notes</a></li>
+      <li><a href="#">⭐ My Favorites</a></li>
+      <li><a href="#">⚙️ Settings</a></li>
+      <li><a href="index.html" class="logout-link">🚪 Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Modal Overlay for Others Section -->
+  <div class="modal-overlay" id="othersModalOverlay" onclick="closeOthersModal()">
+    <div class="others-modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>✨ Other Branches & Subjects</h3>
+        <button class="close-modal-btn" onclick="closeOthersModal()">×</button>
+      </div>
+      <div class="modal-grid">
+        <div class="modal-chip" onclick="selectBranch('Aeronautical Engineering')">🚀 Aeronautical</div>
+        <div class="modal-chip" onclick="selectBranch('Chemical Engineering')">🧪 Chemical</div>
+        <div class="modal-chip" onclick="selectBranch('Data Science & AI')">📊 Data Science</div>
+        <div class="modal-chip" onclick="selectBranch('Environmental Studies')">🌱 Environmental</div>
+        <div class="modal-chip" onclick="selectBranch('Architecture & Design')">🏛️ Architecture</div>
+        <div class="modal-chip" onclick="selectBranch('Cyber Security')">🛡️ Cyber Security</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Outer Container -->
+  <div class="container">
+
+    <!-- Top Header Bar -->
+    <header class="top-header">
+      <!-- 3-Line Menu Button -->
+      <button class="menu-btn" onclick="toggleNav()" aria-label="Open Navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+        </svg>
+      </button>
+
+      <!-- Search Bar -->
+      <div class="search-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="search-icon">
+          <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
+        </svg>
+        <input type="text" id="branchSearch" placeholder="Search Branch / Subject" onkeyup="filterBranches()" autocomplete="off">
+      </div>
+
+      <!-- Logout Button -->
+      <button class="logout-btn" onclick="handleLogout()" aria-label="Logout">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 8.47a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06l3.22-3.22H9a.75.75 0 0 1 0-1.5h6.94l-3.22-3.22a.75.75 0 0 1 1.06-1.06l4.5 4.5Z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main Dashboard Grid Card -->
+    <main class="dashboard-card">
+      <div class="grid-container" id="branchGrid">
+
+        <!-- 1. CSE -->
+        <div class="branch-card" onclick="selectBranch('Computer Science & Engineering')">
+          <div class="card-icon">💻</div>
+          <div class="card-title">CSE</div>
+        </div>
+
+        <!-- 2. ME -->
+        <div class="branch-card" onclick="selectBranch('Mechanical Engineering')">
+          <div class="card-icon">⚙️</div>
+          <div class="card-title">ME</div>
+        </div>
+
+        <!-- 3. ECE -->
+        <div class="branch-card" onclick="selectBranch('Electronics & Communication')">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">ECE</div>
+        </div>
+
+        <!-- 4. Robotics -->
+        <div class="branch-card" onclick="selectBranch('Robotics & Automation')">
+          <div class="card-icon">🤖</div>
+          <div class="card-title">Robotics</div>
+        </div>
+
+        <!-- 5. Maths -->
+        <div class="branch-card" onclick="selectBranch('Mathematics')">
+          <div class="card-icon">📐</div>
+          <div class="card-title">Maths</div>
+        </div>
+
+        <!-- 6. Physics -->
+        <div class="branch-card" onclick="selectBranch('Physics')">
+          <div class="card-icon">⚛️</div>
+          <div class="card-title">Physics</div>
+        </div>
+
+        <!-- 7. EE -->
+        <div class="branch-card" onclick="selectBranch('Electrical Engineering')">
+          <div class="card-icon">🔌</div>
+          <div class="card-title">EE</div>
+        </div>
+
+        <!-- 8. Civil -->
+        <div class="branch-card" onclick="selectBranch('Civil Engineering')">
+          <div class="card-icon">🏗️</div>
+          <div class="card-title">Civil</div>
+        </div>
+
+        <!-- 9. BioTech -->
+        <div class="branch-card" onclick="selectBranch('Biotechnology')">
+          <div class="card-icon">🧬</div>
+          <div class="card-title">BioTech</div>
+        </div>
+
+        <!-- 10. Others Section (Special Highlight Card) -->
+        <div class="branch-card others-card" onclick="openOthersModal()">
+          <div class="card-icon">✨</div>
+          <div class="card-title">Others</div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Interactive JavaScript -->
+  <script>
+    function toggleNav() {
+      document.getElementById('sideDrawer').classList.toggle('open');
+      document.getElementById('navOverlay').classList.toggle('active');
+    }
+
+    function openOthersModal() {
+      document.getElementById('othersModalOverlay').classList.add('active');
+    }
+
+    function closeOthersModal() {
+      document.getElementById('othersModalOverlay').classList.remove('active');
+    }
+
+    function filterBranches() {
+      let input = document.getElementById('branchSearch').value.toLowerCase();
+      let cards = document.getElementsByClassName('branch-card');
+
+      for (let i = 0; i < cards.length; i++) {
+        let title = cards[i].getElementsByClassName('card-title')[0].innerText.toLowerCase();
+        if (title.includes(input)) {
+          cards[i].style.display = "flex";
+        } else {
+          cards[i].style.display = "none";
+        }
+      }
+    }
+
+    function selectBranch(branchName) {
+      closeOthersModal();
+      alert("Opening study material for: " + branchName);
+    }
+
+    function handleLogout() {
+      if(confirm("Are you sure you want to log out of PadhaiHub?")) {
+        window.location.href = "index.html";
+      }
+    }
+  </script>
+</body>
+</html>

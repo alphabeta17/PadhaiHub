@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PadhaiHub - Login</title>
+  <!-- Google Fonts for sleek typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Decorative Background Elements -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Main Container -->
+  <div class="container">
+
+    <!-- Header / Brand Section -->
+    <header class="brand-header">
+      <div class="logo-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="logo-icon">
+          <path d="M11.7 2.805a.75.75 0 0 1 .6 0l9.4 4.7a.75.75 0 0 1 .1.123 1.5 1.5 0 0 1-.1 1.76l-9.4 5.875a.75.75 0 0 1-.6 0l-9.4-5.875A1.5 1.5 0 0 1 2.2 7.63a.75.75 0 0 1 .1-.123l9.4-4.702ZM12 10.41l7.2-4.5L12 2.31 4.8 5.91l7.2 4.5Z" />
+          <path d="M12 12.35l7.5-4.688v3.588a.75.75 0 0 1-.392.658l-6.75 3.75a.75.75 0 0 1-.716 0l-6.75-3.75A.75.75 0 0 1 4.5 11.25V7.662l7.5 4.688Z" />
+          <path d="M12 17.15l7.5-4.167v2.267a.75.75 0 0 1-.392.658l-6.75 3.75a.75.75 0 0 1-.716 0l-6.75-3.75A.75.75 0 0 1 4.5 15.25v-2.267l7.5 4.167Z" />
+        </svg>
+      </div>
+      <h1 class="brand-title">PadhaiHub</h1>
+      <p class="brand-subtitle">Your Ultimate Learning Platform</p>
+    </header>
+
+    <!-- Main Card (Matching Notebook Sketch Frame) -->
+    <main class="login-card">
+
+      <!-- Field 1: Email or Number -->
+      <div class="form-row">
+        <button type="button" class="icon-circle-btn" aria-label="User Identifier">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
+            <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
+          </svg>
+        </button>
+        <div class="input-wrapper">
+          <input type="text" id="identifier" placeholder="Email or Number" required autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Action Row: Fetch OTP -->
+      <div class="fetch-otp-container">
+        <button type="button" class="fetch-otp-btn" id="fetchOtpBtn" onclick="handleFetchOTP()">
+          Fetch OTP
+        </button>
+      </div>
+
+      <!-- Field 2: Enter OTP -->
+      <div class="form-row">
+        <button type="button" class="icon-circle-btn" aria-label="OTP Code">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div class="input-wrapper">
+          <input type="text" id="otp" placeholder="Enter OTP" maxlength="6" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Field 3: Password -->
+      <div class="form-row">
+        <button type="button" class="icon-circle-btn" aria-label="Password Security">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M15.75 1.5a3.75 3.75 0 1 0 0 7.5A3.75 3.75 0 0 0 15.75 1.5ZM4.5 9.75a3 3 0 0 0-3 3v5.25a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-5.25a3 3 0 0 0-3-3H4.5Z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div class="input-wrapper">
+          <input type="password" id="password" placeholder="Password" required>
+        </div>
+      </div>
+
+      <!-- Bottom Actions Row -->
+      <div class="bottom-actions">
+        <a href="#" class="login-question-link">login?</a>
+        <button type="submit" class="submit-btn" onclick="handleSubmit()">Submit</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Optional simple interactivity script -->
+  <script>
+    function handleFetchOTP() {
+      const btn = document.getElementById('fetchOtpBtn');
+      btn.innerText = "OTP Sent!";
+      btn.classList.add('sent');
+      setTimeout(() => {
+        alert("Your PadhaiHub Verification Code is: 4829");
+      }, 500);
+    }
+
+    function handleSubmit() {
+      const id = document.getElementById('identifier').value;
+      if (!id) {
+        alert('Please enter your Email or Number');
+        return;
+      }
+      alert('Welcome

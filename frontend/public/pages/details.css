@@ -1,0 +1,342 @@
+/* ==========================================================================
+   PadhaiHub - User Details Page (Claymorphic Soft 3D Theme)
+   ========================================================================== */
+
+/* --- Color Variables --- */
+:root {
+  --bg-gradient-top: #e0e9e1;
+  --bg-gradient-bottom: #f2ebe1;
+  --card-bg: #eaf1eb;
+  --card-shadow-light: #ffffff;
+  --card-shadow-dark: #b8c7bb;
+  --text-dark: #123524;
+  --text-muted: #5e7e6f;
+  
+  --emerald-main: #0f5132;
+  --emerald-gradient: linear-gradient(135deg, #115e3b, #093822);
+  --orange-main: #f0833a;
+  --orange-gradient: linear-gradient(135deg, #f39248, #d96f27);
+  
+  --field-bg: #e6ede7;
+  --circle-bg: #f5faf6;
+}
+
+/* --- Global Reset & Page Setup --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--bg-gradient-top) 0%, var(--bg-gradient-bottom) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 30px 16px;
+}
+
+/* --- Floating Clay Orbs Background --- */
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.orb-1 {
+  width: 320px;
+  height: 320px;
+  top: -80px;
+  left: -100px;
+  background: radial-gradient(circle at 30% 30%, #f7dcc4, #e29f6d);
+  box-shadow: 14px 20px 32px rgba(180, 110, 60, 0.15);
+  opacity: 0.8;
+}
+
+.orb-2 {
+  width: 380px;
+  height: 380px;
+  bottom: -120px;
+  right: -120px;
+  background: radial-gradient(circle at 30% 30%, #a2d2bd, #0a4d31);
+  box-shadow: 18px 24px 40px rgba(10, 77, 49, 0.2);
+  opacity: 0.65;
+}
+
+.orb-3 {
+  width: 160px;
+  height: 160px;
+  top: 35%;
+  right: 5%;
+  background: radial-gradient(circle at 30% 30%, #ffffff, #d2dfd5);
+  box-shadow: 8px 12px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Container --- */
+.container {
+  width: 100%;
+  max-width: 500px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- Header Section with Back Button --- */
+.brand-header {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --- 3D Back Button --- */
+.back-btn {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--circle-bg);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--emerald-main);
+  box-shadow: 
+    5px 5px 10px var(--card-shadow-dark),
+    -4px -4px 8px var(--card-shadow-light),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.back-btn:hover {
+  transform: translateX(-3px);
+  color: var(--orange-main);
+}
+
+.back-btn:active {
+  transform: translateX(-1px) scale(0.96);
+}
+
+.logo-badge {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  background: var(--emerald-gradient);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 
+    6px 6px 14px rgba(15, 81, 50, 0.25),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.brand-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+}
+
+.brand-subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* --- Outer Details Card --- */
+.details-card {
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: 40px;
+  padding: 32px 28px;
+  box-shadow: 
+    16px 20px 35px var(--card-shadow-dark),
+    -12px -12px 28px var(--card-shadow-light),
+    inset 2px 2px 3px rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* --- Section Blocks --- */
+.section-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--emerald-main);
+  margin-left: 6px;
+}
+
+/* --- Form Row Layout (Circle Icon + Inset Field) --- */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* --- Left 3D Circle Button --- */
+.icon-circle-btn {
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  border-radius: 50%;
+  background: var(--circle-bg);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--emerald-main);
+  box-shadow: 
+    5px 5px 10px var(--card-shadow-dark),
+    -4px -4px 8px var(--card-shadow-light),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.icon-circle-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-circle-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* --- Neumorphic Inset Input Field --- */
+.input-wrapper {
+  flex: 1;
+  background: var(--field-bg);
+  border-radius: 26px;
+  padding: 4px 20px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  box-shadow: 
+    inset 4px 4px 8px #becfbf,
+    inset -4px -4px 8px #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.2s ease;
+}
+
+.input-wrapper:focus-within {
+  box-shadow: 
+    inset 5px 5px 10px #b0c2b1,
+    inset -4px -4px 8px #ffffff,
+    0 0 0 2px rgba(15, 81, 50, 0.2);
+}
+
+.input-wrapper input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.input-wrapper input::placeholder {
+  color: var(--text-muted);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* --- Footer Action Row --- */
+.action-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* --- Orange 3D Button --- */
+.save-btn {
+  background: var(--orange-gradient);
+  color: #ffffff;
+  border: none;
+  padding: 12px 36px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 
+    6px 8px 16px rgba(217, 111, 39, 0.35),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 8px 12px 20px rgba(217, 111, 39, 0.45);
+}
+
+.save-btn:active {
+  transform: translateY(1px);
+  box-shadow: 3px 4px 8px rgba(217, 111, 39, 0.3);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 440px) {
+  .details-card {
+    padding: 24px 18px;
+  }
+  
+  .form-row {
+    gap: 10px;
+  }
+
+  .icon-circle-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+  
+  .input-wrapper {
+    height: 44px;
+    padding: 4px 16px;
+  }
+
+  .save-btn {
+    width: 100%;
+  }
+
+  .back-btn {
+    width: 38px;
+    height: 38px;
+    top: 2px;
+  }
+}
