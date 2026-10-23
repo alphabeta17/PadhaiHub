@@ -308,145 +308,135 @@
   <script>
     // 1. Password Visibility Toggle Functionality
     function togglePasswordVisibility() {
-      const passwordInput = document.getElementById('password');
-      const eyeIcon = document.getElementById('eyeIcon');
-
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
-        eyeIcon.classList.add('text-brandDark');
-      } else {
-        passwordInput.type = 'password';
-        eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
-        eyeIcon.classList.remove('text-brandDark');
-      }
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            eyeIcon.classList.add('text-brandDark');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            eyeIcon.classList.remove('text-brandDark');
+        }
     }
 
-    // 2. Email or Mobile Number Regex Validation Helper
-    function validateIdentifier(inputVal) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      // Validates standard 10-digit phone number (with optional country code prefix)
-      const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
-      return emailRegex.test(inputVal) || phoneRegex.test(inputVal);
+    // 2. Form Submission Handling with Real Database Check
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+        const identifierInput = document.getElementById('userIdentifier');
+        const passwordInput = document.getElementById('password');
+        const identifierVal = identifierInput.value.trim();
+        const passwordVal = passwordInput.value.trim();
+        const identifierError = document.getElementById('identifierError');
+        const passwordError = document.getElementById('passwordError');
+
+        let isValid = true;
+
+        if (!identifierVal) {
+            identifierError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            identifierError.classList.add('hidden');
+        }
+
+        if (!passwordVal || passwordVal.length < 4) {
+            passwordError.classList.remove('hidden');
+            isValid = false;
+        } else {
+            passwordError.classList.add('hidden');
+        }
+
+        if (!isValid) {
+            showToast('Please fill in all fields correctly.', 'error');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // Call Backend Login API
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    email: identifierVal, 
+                    password: passwordVal 
+                })
+            });
+
+            const result = await response.json();
+            setLoading(false);
+
+            if (result.success) {
+                localStorage.setItem("userEmail", identifierVal);
+                showToast(`Welcome back, ${result.user.fullName || 'User'}! Logging in...`, 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1200);
+            } else {
+                showToast(result.message || 'Invalid email or password.', 'error');
+            }
+
+        } catch (err) {
+            setLoading(false);
+            console.error('Login error:', err);
+            showToast('Network error. Backend server is unreachable.', 'error');
+        }
     }
 
-    // 3. Form Submission Handling with Real-time Feedback
-    function handleFormSubmit(e) {
-      e.preventDefault();
-
-      const identifierInput = document.getElementById('userIdentifier');
-      const passwordInput = document.getElementById('password');
-
-      const identifierVal = identifierInput.value.trim();
-      const passwordVal = passwordInput.value.trim();
-
-      const identifierError = document.getElementById('identifierError');
-      const passwordError = document.getElementById('passwordError');
-
-      let isValid = true;
-
-      // Validate Identifier Field
-      if (!identifierVal || !validateIdentifier(identifierVal)) {
-        identifierError.classList.remove('hidden');
-        isValid = false;
-      } else {
-        identifierError.classList.add('hidden');
-      }
-
-      // Validate Password Field
-      if (!passwordVal || passwordVal.length < 4) {
-        passwordError.classList.remove('hidden');
-        isValid = false;
-      } else {
-        passwordError.classList.add('hidden');
-      }
-
-      if (!isValid) {
-        showToast('Please fix the highlighted errors.', 'error');
-        return;
-      }
-
-      // Trigger Submit Loader State
-      setLoading(true);
-
-      // Simulate API Network Request Delay
-      setTimeout(() => {
-        setLoading(false);
-        showToast(`Welcome back to PadhaiHub! Logging in...`, 'success');
-
-        // Reset form inputs after success
-        setTimeout(() => {
-          identifierInput.value = '';
-          passwordInput.value = '';
-        }, 1500);
-      }, 1200);
-    }
-
-    // 4. UI Button Loading State Helper
+    // 3. UI Button Loading State Helper
     function setLoading(isLoading) {
-      const btnText = document.getElementById('btnText');
-      const btnSpinner = document.getElementById('btnSpinner');
-      const submitBtn = document.getElementById('submitBtn');
-
-      if (isLoading) {
-        btnText.textContent = 'Verifying';
-        btnSpinner.classList.remove('hidden');
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.85';
-      } else {
-        btnText.textContent = 'Submit';
-        btnSpinner.classList.add('hidden');
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-      }
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const submitBtn = document.getElementById('submitBtn');
+        if (isLoading) {
+            btnText.textContent = 'Verifying';
+            btnSpinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.85';
+        } else {
+            btnText.textContent = 'Submit';
+            btnSpinner.classList.add('hidden');
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+        }
     }
 
-    // 5. Toast Notification System
+    // 4. Toast Notification System
     function showToast(message, type = 'success') {
-      const toast = document.getElementById('toastNotification');
-      const toastInner = document.getElementById('toastInner');
-      const toastIcon = document.getElementById('toastIcon');
-      const toastText = document.getElementById('toastText');
-
-      toastText.textContent = message;
-
-      if (type === 'success') {
-        toastInner.className = 'p-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold text-white bg-emerald-800 border border-emerald-600 toast-slide';
-        toastIcon.className = 'fa-solid fa-circle-check text-lg text-emerald-300';
-      } else {
-        toastInner.className = 'p-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold text-white bg-rose-800 border border-rose-600 toast-slide';
-        toastIcon.className = 'fa-solid fa-triangle-exclamation text-lg text-rose-300';
-      }
-
-      toast.classList.remove('hidden');
-
-      setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 3500);
+        const toast = document.getElementById('toastNotification');
+        const toastInner = document.getElementById('toastInner');
+        const toastIcon = document.getElementById('toastIcon');
+        const toastText = document.getElementById('toastText');
+        toastText.textContent = message;
+        if (type === 'success') {
+            toastInner.className = 'p-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold text-white bg-emerald-800 border border-emerald-600 toast-slide';
+            toastIcon.className = 'fa-solid fa-circle-check text-lg text-emerald-300';
+        } else {
+            toastInner.className = 'p-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold text-white bg-rose-800 border border-rose-600 toast-slide';
+            toastIcon.className = 'fa-solid fa-triangle-exclamation text-lg text-rose-300';
+        }
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 3500);
     }
 
-    // 6. Navigation Link Handlers
+    // 5. Navigation Link to Signup
     function navigateToSignup(e) {
-      e.preventDefault();
-      document.getElementById('signupModal').classList.remove('hidden');
+        e.preventDefault();
+        window.location.href = 'index.html';
     }
 
-    function closeSignupModal() {
-      document.getElementById('signupModal').classList.add('hidden');
-    }
-
-    // 7. Input Event Listeners to Clear Errors dynamically on typing
+    // Input Event Listeners
     document.getElementById('userIdentifier').addEventListener('input', function() {
-      if (this.value.trim()) {
-        document.getElementById('identifierError').classList.add('hidden');
-      }
+        if (this.value.trim()) document.getElementById('identifierError').classList.add('hidden');
     });
-
     document.getElementById('password').addEventListener('input', function() {
-      if (this.value.trim()) {
-        document.getElementById('passwordError').classList.add('hidden');
-      }
+        if (this.value.trim()) document.getElementById('passwordError').classList.add('hidden');
     });
-  </script>
+</script>
 </body>
 </html>

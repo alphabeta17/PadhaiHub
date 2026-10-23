@@ -64,7 +64,6 @@ router.post('/verify-otp', (req, res) => {
 });
 
 // 3. Save User Profile Details (Including Password)
-// 3. Save User Profile Details (Including Password)
 router.post('/save-profile', async (req, res) => {
     try {
         const { email, password, fullName, university, course, semester, roll, address, linkedin } = req.body;
@@ -73,7 +72,6 @@ router.post('/save-profile', async (req, res) => {
             return res.status(400).json({ success: false, message: "Email is required." });
         }
 
-        // Agar password localStorage mein nahi mila (direct URL hit kiya ho), toh default pass le lo
         const userPassword = password || "default_pass123";
 
         const query = `
@@ -96,8 +94,40 @@ router.post('/save-profile', async (req, res) => {
 
     } catch (error) {
         console.error("❌ Exact Database Error in save-profile:", error.message);
-        // Send the exact SQL error message to frontend for debugging
         res.status(500).json({ success: false, message: `DB Error: ${error.message}` });
+    }
+});
+
+// 4. User Login Route
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: "Email and password are required." });
+        }
+
+        const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
+
+        if (rows.length === 0) {
+            return res.status(400).json({ success: false, message: "Email not found! Please signup first." });
+        }
+
+        const user = rows[0];
+
+        if (user.password !== password) {
+            return res.status(400).json({ success: false, message: "Incorrect password. Please try again." });
+        }
+
+        res.status(200).json({ 
+            success: true, 
+            message: "Login successful!",
+            user: { email: user.email, fullName: user.fullName }
+        });
+
+    } catch (error) {
+        console.error("❌ Login Error:", error.message);
+        res.status(500).json({ success: false, message: `Server Error: ${error.message}` });
     }
 });
 
