@@ -3,7 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import authRoutes from './routes/auth.routes.js'; // Make sure file name case matches exactly
+import authRoutes from './routes/auth.routes.js'; 
+import { initDatabase } from './config/db.js';// Make sure file name case matches exactly
 
 dotenv.config();
 
@@ -31,6 +32,8 @@ app.get('/', (req, res) => {
 
 // Server Listening
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Backend Server is running live on http://localhost:${PORT}`);
+app.listen(PORT, async () => {
+    console.log(`Server is running live on http://localhost:${PORT}`);
+    // Initialize MySQL Tables and Seed Data
+    await initDatabase();
 });
