@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.routes.js'; 
+import { fetchYoutubeVideos, categorizeVideosWithLlama } from './services.js';  
 import { initDatabase } from './config/db.js';// Make sure file name case matches exactly
 
 dotenv.config();
@@ -36,4 +37,31 @@ app.listen(PORT, async () => {
     console.log(`Server is running live on http://localhost:${PORT}`);
     // Initialize MySQL Tables and Seed Data
     await initDatabase();
+});
+
+
+// AI Categorization Route
+app.get('/api/categorize/:topic', async (req, res) => {
+    try {
+        const topic = req.params.topic;
+        console.log(`🔍 Fetching videos for topic: ${topic}...`);
+        
+        // 1. Get videos with stats from YouTube API
+        const videoTable = await fetchYoutubeVideos(topic);
+        console.log("✅ Fetched video stats successfully. Sending to Llama 3.1 via Groq...");
+        
+        // 2. Feed to Llama to categorize
+        const categorizedResult = await categorizeVideosWithLlama(videoTable);
+        
+        // 3. Return structured data to frontend
+        res.json({
+            success: true,
+            topicRequested: topic,
+            rawVideoData: videoTable,
+            aiCategorization: categorizedResult
+        });
+    } catch (error) {
+        console.error("❌ Error in categorization pipeline:", error);
+        res.status(500).json({ success: false, error: error.message || "Pipeline failed." });
+    }
 });

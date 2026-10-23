@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { fetchYoutubeVideos, categorizeVideosWithLlama } from './sevices.js'; 
+import { fetchYoutubeVideos, categorizeVideosWithLlama } from './services.js'; 
 
 dotenv.config();
 const app = express();
