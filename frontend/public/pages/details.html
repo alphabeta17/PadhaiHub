@@ -1,213 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PadhaiHub - User Details</title>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="details.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PadhaiHub - User Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="details.css">
 </head>
 <body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
 
-  <!-- Floating Background Clay Orbs -->
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
+    <div class="container">
+        <header class="brand-header">
+            <button type="button" class="back-btn" onclick="handleGoBack()" aria-label="Go Back">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clip-rule="evenodd"/></svg>
+            </button>
+            <div class="logo-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="logo-icon"><path d="M11.7 2.805a.75.75 0 0 1 .6 0l9.4 4.7a.75.75 0 0 1 .1.123 1.5 1.5 0 0 1-.1 1.76l-9.4 5.875a.75.75 0 0 1-.6 0l-9.4-5.875A1.5 1.5 0 0 1 2.2 7.63a.75.75 0 0 1 .1-.123l9.4-4.702ZM12 10.41l7.2-4.5L12 2.31 4.8 5.91l7.2 4.5Z"/></svg>
+            </div>
+            <h1 class="brand-title">PadhaiHub</h1>
+            <p class="brand-subtitle">Complete Your Student Profile</p>
+        </header>
 
-  <!-- Main Outer Container -->
-  <div class="container">
+        <main class="details-card">
+            <!-- SECTION 1: Personal & College Info -->
+            <section class="section-block">
+                <div class="section-title">Academic Background</div>
 
-    <!-- Header Section with Back Button -->
-    <header class="brand-header">
-      <button type="button" class="back-btn" onclick="handleGoBack()" aria-label="Go Back">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clip-rule="evenodd" />
-        </svg>
-      </button>
+                <!-- Name -->
+                <div class="form-row">
+                    <button type="button" class="icon-circle-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.6-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd"/></svg></button>
+                    <div class="input-wrapper"><input type="text" id="name" placeholder="Full Name" required autocomplete="off"></div>
+                </div>
 
-      <div class="logo-badge">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="logo-icon">
-          <path d="M11.7 2.805a.75.75 0 0 1 .6 0l9.4 4.7a.75.75 0 0 1 .1.123 1.5 1.5 0 0 1-.1 1.76l-9.4 5.875a.75.75 0 0 1-.6 0l-9.4-5.875A1.5 1.5 0 0 1 2.2 7.63a.75.75 0 0 1 .1-.123l9.4-4.702ZM12 10.41l7.2-4.5L12 2.31 4.8 5.91l7.2 4.5Z" />
-          <path d="M12 12.35l7.5-4.688v3.588a.75.75 0 0 1-.392.658l-6.75 3.75a.75.75 0 0 1-.716 0l-6.75-3.75A.75.75 0 0 1 4.5 11.25V7.662l7.5 4.688Z" />
-          <path d="M12 17.15l7.5-4.167v2.267a.75.75 0 0 1-.392.658l-6.75 3.75a.75.75 0 0 1-.716 0l-6.75-3.75A.75.75 0 0 1 4.5 15.25v-2.267l7.5 4.167Z" />
-        </svg>
-      </div>
-      <h1 class="brand-title">PadhaiHub</h1>
-      <p class="brand-subtitle">Complete Your Student Profile</p>
-    </header>
+                <!-- University Dropdown with 50+ Top Colleges near Sonipat, Delhi & Haryana -->
+                <div class="form-row">
+                    <button type="button" class="icon-circle-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M3 2.25a.75.75 0 0 0 0 1.5v16.5h-.75a.75.75 0 0 0 0 1.5h19.5a.75.75 0 0 0 0-1.5H21V3.75a.75.75 0 0 0 0-1.5H3Zm3 3a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-.75.75h-3A.75.75 0 0 1 6 8.25v-3Z" clip-rule="evenodd"/></svg></button>
+                    <div class="input-wrapper">
+                        <input type="text" id="university" list="collegesList" placeholder="Select or type University / College name" required autocomplete="off">
+                        <datalist id="collegesList">
+                            <!-- Sonipat Local Universities -->
+                            <option value="Deenbandhu Chhotu Ram University of Science and Technology (DCRUST Murthal)">
+                            <option value="O.P. Jindal Global University, Sonipat">
+                            <option value="SRM Institute of Science and Technology, Sonipat">
+                            <option value="National Institute of Food Technology Entrepreneurship and Management (NIFTEM), Sonipat">
+                            <option value="World University of Design, Sonipat">
+                            <option value="Ansal University / Sushant University">
+                            <option value="Hindu College, Sonipat">
+                            <option value="Tika Ram Girls College, Sonipat">
+                            <option value="Geeta University, Panipat/Sonipat">
+                            <option value="PDM University, Bahadurgarh">
+                            
+                            <!-- Delhi NCR Top Universities -->
+                            <option value="Indian Institute of Technology Delhi (IIT Delhi)">
+                            <option value="Delhi Technological University (DTU, Delhi)">
+                            <option value="Netaji Subhas University of Technology (NSUT, Delhi)">
+                            <option value="Indraprastha Institute of Information Technology (IIIT-Delhi)">
+                            <option value="University of Delhi (DU, Delhi)">
+                            <option value="Jawaharlal Nehru University (JNU, Delhi)">
+                            <option value="Jamia Millia Islamia, New Delhi">
+                            <option value="Guru Gobind Singh Indraprastha University (GGSIPU, Delhi)">
+                            <option value="Indira Gandhi Delhi Technical University for Women (IGDTUW)">
+                            <option value="South Asian University, New Delhi">
+                            <option value="Ambedkar University Delhi">
 
-    <!-- Main Card Container -->
-    <main class="details-card">
+                            <!-- Haryana & Nearby Universities -->
+                            <option value="Maharaja Agrasen University">
+                            <option value="Kurukshetra University, Kurukshetra">
+                            <option value="Maharshi Dayanand University (MDU, Rohtak)">
+                            <option value="Guru Jambheshwar University of Science and Technology (GJUST, Hisar)">
+                            <option value="Chaudhary Charan Singh Haryana Agricultural University, Hisar">
+                            <option value="Central University of Haryana, Mahendragarh">
+                            <option value="YMCA University of Science and Technology, Faridabad">
+                            <option value="Bhagat Phansingh Mahila Vishwavidyalaya, Sonipat">
+                            <option value="LPU - Lovely Professional University">
+                            <option value="Chandigarh University">
+                            <option value="Amity University, Manesar">
+                            <option value="GD Goenka University, Gurgaon">
+                            <option value="K.R. Mangalam University, Gurgaon">
+                            <option value="BML Munjal University, Gurgaon">
+                            <option value="Manav Rachna International Institute of Research and Studies">
+                            <option value="St. Andrews Institute of Technology and Management, Gurgaon">
+                            <option value="PDM College of Engineering, Bahadurgarh">
+                            <option value="Hindu Institute of Engineering and Technology, Sonipat">
+                            <option value="NC College of Engineering, Israna">
+                            <option value="Panipat Institute of Engineering and Technology (PIET)">
+                            <option value="SGT University, Gurgaon">
+                            <option value="NIILM University, Kaithal">
+                            <option value="JK Mupal University">
+                            <option value="Rishihood University, Sonipat">
+                            <option value="Plaksha University, Mohali">
+                            <option value="Ashoka University, Sonipat">
+                        </datalist>
+                    </div>
+                </div>
 
-      <!-- SECTION 1: Personal & College Info -->
-      <section class="section-block">
-        <div class="section-title">Academic Background</div>
+                <!-- Course Dropdown -->
+                <div class="form-row">
+                    <button type="button" class="icon-circle-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.7 2.805a.75.75 0 0 1 .6 0l9.4 4.7a.75.75 0 0 1 .1.123 1.5 1.5 0 0 1-.1 1.76l-9.4 5.875a.75.75 0 0 1-.6 0l-9.4-5.875A1.5 1.5 0 0 1 2.2 7.63a.75.75 0 0 1 .1-.123l9.4-4.702ZM12 10.41l7.2-4.5L12 2.31 4.8 5.91l7.2 4.5Z"/></svg></button>
+                    <div class="input-wrapper">
+                        <input type="text" id="course" list="courseList" placeholder="Select or type Course (e.g. B.Tech CSE)" required autocomplete="off">
+                        <datalist id="courseList">
+                            <option value="B.Tech Computer Science & Engineering">
+                            <option value="B.Tech Mechanical Engineering">
+                            <option value="B.Tech Electronics & Communication">
+                            <option value="B.Tech Civil Engineering">
+                            <option value="B.Tech Electrical Engineering">
+                            <option value="B.Tech Information Technology">
+                            <option value="B.Tech Artificial Intelligence & Data Science">
+                            <option value="B.Tech Robotics & Automation">
+                            <option value="Bachelor of Computer Applications (BCA)">
+                            <option value="Master of Computer Applications (MCA)">
+                            <option value="B.Sc Mathematics">
+                            <option value="B.Sc Physics">
+                        </datalist>
+                    </div>
+                </div>
+            </section>
 
-        <!-- Row 1: Name -->
-        <div class="form-row">
-          <button type="button" class="icon-circle-btn" aria-label="Name">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.6-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
-            </svg>
-          </button>
-          <div class="input-wrapper">
-            <input type="text" id="name" placeholder="Name" required autocomplete="off">
-          </div>
-        </div>
+            <!-- SECTION 2: Student Details -->
+            <section class="section-block">
+                <div class="section-title">Student Details & Socials</div>
 
-        <!-- Row 2: University / College Name -->
-        <div class="form-row">
-          <button type="button" class="icon-circle-btn" aria-label="University or College Name">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M3 2.25a.75.75 0 0 0 0 1.5v16.5h-.75a.75.75 0 0 0 0 1.5h19.5a.75.75 0 0 0 0-1.5H21V3.75a.75.75 0 0 0 0-1.5H3Zm3 3a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-.75.75h-3A.75.75 0 0 1 6 8.25v-3Zm10.5-.75a.75.75 0 0 0-.75.75v3c0 .414.336.75.75.75h3a.75.75 0 0 0 .75-.75v-3a.75.75 0 0 0-.75-.75h-3ZM6 13.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-.75.75h-3A.75.75 0 0 1 6 16.5v-3Zm10.5-.75a.75.75 0 0 0-.75.75v3c0 .414.336.75.75.75h3a.75.75 0 0 0 .75-.75v-3a.75.75 0 0 0-.75-.75h-3Z" clip-rule="evenodd" />
-            </svg>
-          </button>
-          <div class="input-wrapper">
-            <input type="text" id="university" placeholder="University name / College name" required autocomplete="off">
-          </div>
-        </div>
+                <!-- Semester -->
+                <div class="form-row">
+                    <button type="button" class="icon-circle-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3a.75.75 0 0 1 1.5 0v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3h.75V3a.75.75 0 0 1 .75-.75ZM3.75 9v9.75c0 .828.672 1.5 1.5 1.5h13.5c.828 0 1.5-.672 1.5-1.5V9H3.75Z" clip-rule="evenodd"/></svg></button>
+                    <div class="input-wrapper"><input type="text" id="sem" placeholder="Semester (e.g. Sem 5)" required autocomplete="off"></div>
+                </div>
 
-        <!-- Row 3: Course -->
-        <div class="form-row">
-          <button type="button" class="icon-circle-btn" aria-label="Course">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M11.7 2.805a.75.75 0 0 1 .6 0l9.4 4.7a.75.75 0 0 1 .1.123 1.5 1.5 0 0 1-.1 1.76l-9.4 5.875a.75.75 0 0 1-.6 0l-9.4-5.875A1.5 1.5 0 0 1 2.2 7.63a.75.75 0 0 1 .1-.123l9.4-4.702ZM12 10.41l7.2-4.5L12 2.31 4.8 5.91l7.2 4.5Z" />
-              <path d="M12 12.35l7.5-4.688v3.588a.75.75 0 0 1-.392.658l-6.75 3.75a.75.75 0 0 1-.716 0l-6.75-3.75A.75.75 0 0 1 4.5 11.25V7.662l7.5 4.688Z" />
-            </svg>
-          </button>
-          <div class="input-wrapper">
-            <input type="text" id="course" placeholder="Course" required autocomplete="off">
-          </div>
-        </div>
-      </section>
+                <!-- Roll Number -->
+                <div class="form-row">
+                    <button type="button" class="icon-circle-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 3.75a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-15Z" clip-rule="evenodd"/></svg></button>
+                    <div class="input-wrapper"><input type="text" id="rollno" placeholder="Roll No / Registration No" required autocomplete="off"></div>
+                </div>
 
-      <!-- SECTION 2: Academic & Personal Info -->
-      <section class="section-block">
-        <div class="section-title">Student Details & Socials</div>
+                <!-- Address -->
+                <div class="form-row">
+                    <button type="button" class="icon-circle-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827z" clip-rule="evenodd"/></svg></button>
+                    <div class="input-wrapper"><input type="text" id="address" placeholder="Address" required autocomplete="off"></div>
+                </div>
 
-        <!-- Row 4: Semester -->
-        <div class="form-row">
-          <button type="button" class="icon-circle-btn" aria-label="Semester">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3a.75.75 0 0 1 1.5 0v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3h.75V3a.75.75 0 0 1 .75-.75ZM3.75 9v9.75c0 .828.672 1.5 1.5 1.5h13.5c.828 0 1.5-.672 1.5-1.5V9H3.75Z" clip-rule="evenodd" />
-            </svg>
-          </button>
-          <div class="input-wrapper">
-            <input type="text" id="sem" placeholder="Sem" required autocomplete="off">
-          </div>
-        </div>
+                <!-- LinkedIn -->
+                <div class="form-row">
+                    <button type="button" class="icon-circle-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></button>
+                    <div class="input-wrapper"><input type="url" id="linkedin" placeholder="LinkedIn Profile URL" autocomplete="off"></div>
+                </div>
+            </section>
 
-        <!-- Row 5: Roll Number -->
-        <div class="form-row">
-          <button type="button" class="icon-circle-btn" aria-label="Roll Number">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M4.5 3.75a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V6.75a3 3 0 0 0-3-3h-15Zm4.125 3a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm-3.75 8.25a3.75 3.75 0 0 1 7.5 0 .75.75 0 0 1-.75.75h-6a.75.75 0 0 1-.75-.75Zm9.75-6a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Zm0 3a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" clip-rule="evenodd" />
-            </svg>
-          </button>
-          <div class="input-wrapper">
-            <input type="text" id="rollno" placeholder="Roll no" required autocomplete="off">
-          </div>
-        </div>
+            <!-- Submit Action Row -->
+            <div class="action-footer">
+                <button type="submit" class="save-btn" onclick="handleSaveDetails()">Save Details</button>
+            </div>
+        </main>
+    </div>
 
-        <!-- Row 6: Address -->
-        <div class="form-row">
-          <button type="button" class="icon-circle-btn" aria-label="Address">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-            </svg>
-          </button>
-          <div class="input-wrapper">
-            <input type="text" id="address" placeholder="Address" required autocomplete="off">
-          </div>
-        </div>
-
-        <!-- Row 7: LinkedIn -->
-        <div class="form-row">
-          <button type="button" class="icon-circle-btn" aria-label="LinkedIn Profile">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
-            </svg>
-          </button>
-          <div class="input-wrapper">
-            <input type="url" id="linkedin" placeholder="LinkedIn" autocomplete="off">
-          </div>
-        </div>
-      </section>
-
-      <!-- Submit Action Row -->
-      <div class="action-footer">
-        <button type="submit" class="save-btn" onclick="handleSaveDetails()">Save Details</button>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- Interactive JavaScript -->
-<!-- HTML Same as before... Replace ONLY the <script> tag at the bottom -->
-<script>
-    function handleGoBack() {
-        window.history.back();
-    }
-
-    async function handleSaveDetails() {
-        const name = document.getElementById('name').value.trim();
-        const university = document.getElementById('university').value.trim();
-        const course = document.getElementById('course').value.trim();
-        const sem = document.getElementById('sem') ? document.getElementById('sem').value.trim() : "";
-        const rollno = document.getElementById('rollno') ? document.getElementById('rollno').value.trim() : "";
-        const address = document.getElementById('address') ? document.getElementById('address').value.trim() : "";
-        const linkedin = document.getElementById('linkedin') ? document.getElementById('linkedin').value.trim() : "";
-
-        const email = localStorage.getItem("userEmail");
-
-        if (!name || !university || !course) {
-            alert('Please fill out the primary fields (Name, University/College, Course)');
-            return;
+    <script>
+        function handleGoBack() {
+            window.history.back();
         }
 
-        if (!email) {
-            alert('Session expired. Please log in again.');
-            window.location.href = 'index.html';
-            return;
-        }
-
-        try {
-            // Fix: Call the absolute backend URL
-            const response = await fetch('http://localhost:5000/api/auth/save-profile', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    email: email, 
-                    fullName: name, 
-                    university: university, 
-                    course: course,
-                    semester: sem,
-                    roll: rollno,
-                    address: address,
-                    linkedin: linkedin
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                alert('Details Saved Successfully! Welcome, ' + name + '.');
-                // Fix: Redirect to Home Dashboard
-                window.location.href = 'home.html'; 
-            } else {
-                alert(result.message || 'Failed to save details.');
+        function showInlineError(message) {
+            let errDiv = document.getElementById("detailsError");
+            if (!errDiv) {
+                errDiv = document.createElement("div");
+                errDiv.id = "detailsError";
+                errDiv.style.color = "#d9534f";
+                errDiv.style.fontSize = "13px";
+                errDiv.style.fontWeight = "700";
+                errDiv.style.textAlign = "center";
+                errDiv.style.marginTop = "10px";
+                const actionFooter = document.querySelector('.action-footer');
+                actionFooter.parentNode.insertBefore(errDiv, actionFooter);
             }
-        } catch (error) {
-            console.error('Error saving profile:', error);
-            // Fallback for UI testing if DB is down
-            alert('Network error, but moving to dashboard for testing.');
-            window.location.href = 'home.html';
+            errDiv.innerText = message;
+            errDiv.style.display = "block";
         }
-    }
-</script>
+
+        async function handleSaveDetails() {
+            const name = document.getElementById('name').value.trim();
+            const university = document.getElementById('university').value.trim();
+            const course = document.getElementById('course').value.trim();
+            const sem = document.getElementById('sem').value.trim();
+            const rollno = document.getElementById('rollno').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const linkedin = document.getElementById('linkedin').value.trim();
+
+            const email = localStorage.getItem("userEmail");
+            const password = localStorage.getItem("userPassword");
+
+            if (!name || !university || !course) {
+                showInlineError('Please fill out the primary fields (Name, University, Course)');
+                return;
+            }
+
+            if (!email || !password) {
+                showInlineError('Session expired. Please log in again.');
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+                return;
+            }
+
+            const saveBtn = document.querySelector('.save-btn');
+            saveBtn.innerText = "Saving...";
+            saveBtn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/save-profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email, 
+                        password,
+                        fullName: name, 
+                        university, 
+                        course,
+                        semester: sem,
+                        roll: rollno,
+                        address,
+                        linkedin
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    saveBtn.innerText = "Saved!";
+                    window.location.href = 'home.html'; 
+                } else {
+                    saveBtn.innerText = "Save Details";
+                    saveBtn.disabled = false;
+                    showInlineError(result.message || 'Failed to save details.');
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                saveBtn.innerText = "Save Details";
+                saveBtn.disabled = false;
+                showInlineError('Network error. Backend server is unreachable.');
+            }
+        }
+    </script>
 </body>
 </html>
