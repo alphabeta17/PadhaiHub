@@ -1,27 +1,32 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-// 1. Fetch YouTube Videos and their Statistics
-export async function fetchYoutubeVideos(searchQuery) {
+// 1. Fetch YouTube Videos with Tightened Search Query
+export async function fetchYoutubeVideos(searchQuery, category = 'oneshot') {
     const apiKey = process.env.YOUTUBE_API_KEY;
     
-    // Step A: Search for the top videos
-    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(searchQuery)}&type=video&key=${apiKey}`;
+    // Query refinement based on category to get accurate academic results
+    let modifier = "engineering lecture tutorial";
+    if (category === 'oneshot') modifier = "one shot full revision lecture";
+    else if (category === 'fulldetail') modifier = "complete course detailed explanation unit wise";
+    else if (category === 'playlist') modifier = "full playlist complete syllabus";
+
+    const preciseQuery = `${searchQuery} ${modifier}`;
+    
+    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&q=${encodeURIComponent(preciseQuery)}&type=video&key=${apiKey}`;
     const searchRes = await fetch(searchUrl);
     const searchData = await searchRes.json();
     
     if (!searchData.items || searchData.items.length === 0) {
-        throw new Error("No videos found on YouTube for this topic.");
+        throw new Error("No precise videos found on YouTube for this topic.");
     }
 
     const videoIds = searchData.items.map(item => item.id.videoId).filter(Boolean).join(',');
 
-    // Step B: Get views, comments, and thumbnails for those specific videos
     const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoIds}&key=${apiKey}`;
     const statsRes = await fetch(statsUrl);
     const statsData = await statsRes.json();
 
-    // Map into a clean array format
     return statsData.items.map(item => ({
         id: item.id,
         title: item.snippet.title,
@@ -36,10 +41,15 @@ export async function fetchYoutubeVideos(searchQuery) {
     }));
 }
 
-// 2. Feed the Table to Llama via Groq for Categorization
-// 2. Feed the Table to Llama via Groq for Categorization
-export async function categorizeVideosWithLlama(videosArray) {
-    const systemPrompt = `You are an expert data analyst and educational curator. I will provide a JSON array of YouTube videos with publish dates, view counts, and comment counts. Categorize these videos into three distinct groups: 'Trending Now', 'Evergreen/Highly Viewed', and 'High Engagement (Comments)'. Output the result in a clean JSON format matching these exact keys.`;
+// 2. Strict Prompt Tightening for Groq Llama 3.1
+export async function categorizeVideosWithLlama(videosArray, subject, category) {
+    const systemPrompt = `You are an elite AI curriculum curator for engineering students. 
+    You will receive a JSON array of YouTube videos for the subject "${subject}" under the selected category type: "${category}".
+    
+    CRITICAL INSTRUCTIONS:
+    1. Filter out completely irrelevant, clickbait, or entertainment videos that do not match academic learning for "${subject}".
+    2. Rank and categorize the remaining videos into three strict groups based on quality and relevance: 'Top Curated Picks', 'Evergreen Detailed', and 'High Engagement'.
+    3. Output the result strictly in valid JSON format matching these exact keys: {"Top Curated Picks": [...], "Evergreen Detailed": [...], "High Engagement": [...]}.`;
 
     const url = `${process.env.GROQ_BASE_URL}/chat/completions`;
     
@@ -56,29 +66,25 @@ export async function categorizeVideosWithLlama(videosArray) {
                     { role: 'system', content: systemPrompt }, 
                     { role: 'user', content: JSON.stringify(videosArray) }
                 ],
-                temperature: 0.2,
+                temperature: 0.1, // Lower temperature for high precision and zero hallucination
                 response_format: { type: "json_object" } 
             })
         });
 
         const data = await response.json();
 
-        // Agar Groq ne koi error message return kiya hai toh use console par print karein
         if (!response.ok || !data.choices || !data.choices[0]) {
-            console.error("❌ Groq API Detailed Error:", JSON.stringify(data, null, 2));
             throw new Error(data.error?.message || "Failed to get response from Groq Llama API.");
         }
 
         return JSON.parse(data.choices[0].message.content);
 
     } catch (error) {
-        console.warn("⚠️ Groq AI call failed. Using fallback categorization so UI doesn't break:", error.message);
-        
-        // Fallback categorization agar Groq API fail ya rate-limit ho jaye
+        console.warn("⚠️ Groq AI call failed, using smart fallback:", error.message);
         return {
-            "Trending Now": videosArray.slice(0, 4),
-            "Evergreen/Highly Viewed": videosArray.slice(4, 7),
-            "High Engagement (Comments)": videosArray.slice(7, 10)
+            "Top Curated Picks": videosArray.slice(0, 4),
+            "Evergreen Detailed": videosArray.slice(4, 8),
+            "High Engagement": videosArray.slice(8, 12)
         };
     }
 }

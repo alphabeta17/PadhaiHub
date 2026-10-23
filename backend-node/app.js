@@ -19,6 +19,32 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Enable CORS
+app.use(cors());
+
+// AI Categorization Route
+app.get('/api/categorize/:topic/:category', async (req, res) => {
+    try {
+        const topic = decodeURIComponent(req.params.topic);
+        const category = req.params.category || 'oneshot';
+        console.log(`🔍 Fetching precise videos for: ${topic} [Category: ${category}]...`);
+        
+        const videoTable = await fetchYoutubeVideos(topic, category);
+        const categorizedResult = await categorizeVideosWithLlama(videoTable, topic, category);
+        
+        res.json({
+            success: true,
+            topicRequested: topic,
+            categoryRequested: category,
+            rawVideoData: videoTable,
+            aiCategorization: categorizedResult
+        });
+    } catch (error) {
+        console.error("Error in categorization pipeline:", error);
+        res.status(500).json({ success: false, error: error.message || "Pipeline failed." });
+    }
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 

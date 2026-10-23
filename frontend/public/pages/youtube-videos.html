@@ -173,39 +173,39 @@
         let currentCriteria = 'viewCount';
 
         window.onload = async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const subject = urlParams.get('subject') || 'Mathematics I';
-            const category = urlParams.get('category') || 'oneshot';
+    const urlParams = new URLSearchParams(window.location.search);
+    const subject = urlParams.get('subject') || 'Data Structures & Algorithms';
+    const category = urlParams.get('category') || 'oneshot';
 
-            document.getElementById('currentCategoryPill').innerHTML = `<i class="fa-solid fa-bolt"></i> ${subject} (${category.toUpperCase()})`;
+    document.getElementById('currentCategoryPill').innerHTML = `<i class="fa-solid fa-bolt"></i> ${subject} (${category.toUpperCase()})`;
 
-            try {
-                const response = await fetch(`http://localhost:5000/api/categorize/${encodeURIComponent(subject)}`);
-                const result = await response.json();
+    try {
+        // Updated fetch URL including both subject and category parameters to match backend server.js
+        const response = await fetch(`http://localhost:5000/api/categorize/${encodeURIComponent(subject)}/${encodeURIComponent(category)}`);
+        const result = await response.json();
 
-                if (result.success) {
-                    rawVideos = result.rawVideoData;
-                    aiCategorizedData = result.aiCategorization;
+        if (result.success) {
+            rawVideos = result.rawVideoData;
+            aiCategorizedData = result.aiCategorization;
 
-                    const categoryKeys = Object.keys(aiCategorizedData);
-                    if (categoryKeys.length > 0) {
-                        activeVideoList = aiCategorizedData[categoryKeys[0]] || rawVideos;
-                    } else {
-                        activeVideoList = rawVideos;
-                    }
-
-                    sortAndRenderVideos();
-                } else {
-                    alert("AI Pipeline failed to load recommendations.");
-                }
-            } catch (err) {
-                console.error("Connection Error:", err);
-                alert("Network error: Could not reach backend server at http://localhost:5000.");
-            } finally {
-                // Ensure loading overlay is always hidden whether success or error
-                document.getElementById('loadingOverlay').style.display = 'none';
+            const categoryKeys = Object.keys(aiCategorizedData);
+            if (categoryKeys.length > 0) {
+                activeVideoList = aiCategorizedData[categoryKeys[0]] || rawVideos;
+            } else {
+                activeVideoList = rawVideos;
             }
-        };
+
+            sortAndRenderVideos();
+        } else {
+            alert("AI Pipeline failed to load recommendations.");
+        }
+    } catch (err) {
+        console.error("Connection Error:", err);
+        alert("Network error: Could not reach backend server at http://localhost:5000.");
+    } finally {
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }
+};
 
         function changeCriteria(newCriteria) {
             currentCriteria = newCriteria;

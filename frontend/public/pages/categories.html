@@ -44,7 +44,7 @@
 
     <!-- Main Neumorphic Card Container -->
     <div class="card-container">
-        <button class="back-btn" onclick="history.back()" title="Go Back">
+        <button class="back-btn" onclick="navigateToSubjects()" title="Go Back">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
         <div class="brand-logo">
@@ -78,9 +78,16 @@
     </div>
 
     <script>
-        function navigateToCategory(category) {
-            window.location.href = `youtube-videos.html`;
-        }
-    </script>
+    function navigateToCategory(category) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const subject = urlParams.get('subject') || 'Data Structures & Algorithms';
+    const branch = urlParams.get('branch') || 'CSE';
+    
+    window.location.href = `youtube-videos.html?branch=${encodeURIComponent(branch)}&subject=${encodeURIComponent(subject)}&category=${category}`;
+}
+    function navigateToSubjects(){
+      window.location.href = `subjects.html`;
+    }
+</script>
 </body>
 </html>

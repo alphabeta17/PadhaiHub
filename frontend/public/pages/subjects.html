@@ -202,7 +202,7 @@
     <!-- Top Navigation Bar -->
     <header class="navbar">
       <div class="nav-left">
-        <a href="categories.html" class="back-btn" title="Back to Categories">
+        <a href="home.html" class="back-btn" title="Back to Categories">
           <i class="fa-solid fa-chevron-left"></i>
         </a>
         <div class="brand-group">
@@ -213,61 +213,103 @@
     </header>
 
     <!-- Options Selection Grid -->
-    <div class="grid-container">
-      
-      <!-- 1. YouTube Videos -->
-      <div class="option-card" onclick="location.href='youtube-videos.html'">
-        <div class="card-icon-badge"><i class="fa-solid fa-video"></i></div>
-        <div class="card-info">
-          <div class="card-title">Video Lectures</div>
-          <div class="card-desc">Ranked One-Shot & Full Courses</div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </div>
+   <div class="grid-container" id="subjectsGrid">
+    <!-- Dynamically populated by script -->
+</div>
 
-      <!-- 2. PYQs -->
-      <div class="option-card" onclick="location.href='pyqs.html'">
-        <div class="card-icon-badge"><i class="fa-solid fa-file-lines"></i></div>
-        <div class="card-info">
-          <div class="card-title">Previous Year Qs</div>
-          <div class="card-desc">Semester & Exam Papers PDF</div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </div>
+<script>
+    // Vast & Comprehensive Subject Database mapped across Engineering Branches
+    const branchSubjects = {
+        "Computer Science & Engineering": [
+            { name: "Data Structures & Algorithms", icon: "fa-code", desc: "Arrays, Trees, Graphs, DP & Sorting" },
+            { name: "Database Management Systems", icon: "fa-database", desc: "SQL, Relational Algebra, ER Models & Normalization" },
+            { name: "Operating Systems", icon: "fa-laptop-code", desc: "CPU Scheduling, Synchronization, Deadlocks & Memory" },
+            { name: "Object Oriented Programming", icon: "fa-mug-hot", desc: "Classes, Inheritance, Polymorphism & STL" },
+            { name: "Computer Networks", icon: "fa-network-wired", desc: "TCP/IP, OSI Layers, Routing & Network Security" },
+            { name: "Software Engineering", icon: "fa-diagram-project", desc: "SDLC Models, SRS, DFD & Testing Methodologies" },
+            { name: "Artificial Intelligence & ML", icon: "fa-robot", desc: "Supervised Learning, Neural Networks & NLP" },
+            { name: "Theory of Computation", icon: "fa-brain", desc: "Automata, Turing Machines & Complexity Theory" },
+            { name: "Computer Architecture", icon: "fa-microchip", desc: "Pipelining, Cache Memory & Instruction Sets" }
+        ],
+        "Mechanical Engineering": [
+            { name: "Engineering Thermodynamics", icon: "fa-fire", desc: "Laws of Thermodynamics, Entropy & Power Cycles" },
+            { name: "Fluid Mechanics", icon: "fa-water", desc: "Fluid Statics, Kinematics & Navier-Stokes Equations" },
+            { name: "Strength of Materials", icon: "fa-dumbbell", desc: "Stress, Strain, Bending Moments & Shear Forces" },
+            { name: "Theory of Machines", icon: "fa-gears", desc: "Kinematics, Cams, Governors & Balancing" },
+            { name: "Machine Design", icon: "fa-pencil-ruler", desc: "Design of Shafts, Gears, Bearings & Fasteners" },
+            { name: "Heat Transfer", icon: "fa-temperature-high", desc: "Conduction, Convection, Radiation & Heat Exchangers" }
+        ],
+        "Electronics & Communication": [
+            { name: "Digital Electronics", icon: "fa-microchip", desc: "Logic Gates, Boolean Algebra, Flip-Flops & FSM" },
+            { name: "Analog Circuits", icon: "fa-wave-square", desc: "Diodes, BJT, MOSFET Amplifiers & Op-Amps" },
+            { name: "Signals and Systems", icon: "fa-signal", desc: "Fourier Transforms, Laplace & LTI Systems" },
+            { name: "Microprocessors & Microcontrollers", icon: "fa-cpu", desc: "8086 Architecture, Assembly & Interfacing" },
+            { name: "Communication Systems", icon: "fa-tower-broadcast", desc: "AM/FM Modulation, Information Theory & Digital Comm" }
+        ],
+        "Electrical Engineering": [
+            { name: "Electrical Machines", icon: "fa-bolt", desc: "Transformers, DC Machines & Induction Motors" },
+            { name: "Power Systems", icon: "fa-plug", desc: "Generation, Transmission, Fault Analysis & Protection" },
+            { name: "Control Systems", icon: "fa-sliders", desc: "Transfer Functions, Bode Plots & Nyquist Stability" },
+            { name: "Power Electronics", icon: "fa-charging-station", desc: "Thyristors, Inverters, Choppers & Rectifiers" },
+            { name: "Circuit Theory", icon: "fa-bolt-lightning", desc: "Network Theorems, Transient Analysis & Two-Port Networks" }
+        ],
+        "Civil Engineering": [
+            { name: "Structural Analysis", icon: "fa-building", desc: "Trusses, Arches, Cables & Matrix Methods" },
+            { name: "Geotechnical Engineering", icon: "fa-mountain", desc: "Soil Mechanics, Foundation Design & Shear Strength" },
+            { name: "Transportation Engineering", icon: "fa-road", desc: "Highway Alignment, Traffic Design & Pavements" },
+            { name: "Environmental Engineering", icon: "fa-seedling", desc: "Water Treatment, Air Pollution & Waste Management" },
+            { name: "Surveying & Geomatics", icon: "fa-compass", desc: "Levelling, Theodolite & GPS Surveying Techniques" }
+        ],
+        "Data Science & AI": [
+            { name: "Python for Data Science", icon: "fa-python", desc: "NumPy, Pandas, Matplotlib & Data Wrangling" },
+            { name: "Machine Learning Algorithms", icon: "fa-chart-line", desc: "Regression, Classification, SVM & Random Forests" },
+            { name: "Deep Learning", icon: "fa-brain", desc: "CNNs, RNNs, Transformers & PyTorch Framework" },
+            { name: "Big Data Analytics", icon: "fa-database", desc: "Hadoop, Spark, and Distributed Data Processing" }
+        ]
+    };
 
-      <!-- 3. Quiz -->
-      <div class="option-card" onclick="location.href='quiz.html'">
-        <div class="card-icon-badge"><i class="fa-solid fa-circle-check"></i></div>
-        <div class="card-info">
-          <div class="card-title">Practice Quiz</div>
-          <div class="card-desc">Interactive Mock Tests & MCQs</div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </div>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let branch = urlParams.get('branch') || 'Computer Science & Engineering';
+        
+        // Normalize branch names if coming from short forms
+        if (branch === 'CSE') branch = 'Computer Science & Engineering';
+        else if (branch === 'ME') branch = 'Mechanical Engineering';
+        else if (branch === 'ECE') branch = 'Electronics & Communication';
+        else if (branch === 'EE') branch = 'Electrical Engineering';
+        else if (branch === 'Civil') branch = 'Civil Engineering';
 
-      <!-- 4. Books -->
-      <div class="option-card" onclick="location.href='books.html'">
-        <div class="card-icon-badge"><i class="fa-solid fa-book"></i></div>
-        <div class="card-info">
-          <div class="card-title">Reference Books</div>
-          <div class="card-desc">Standard Textbooks & E-Books</div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </div>
+        document.querySelector('.brand-name').innerText = `PadhaiHub - ${branch}`;
+        
+        const grid = document.getElementById('subjectsGrid');
+        grid.innerHTML = '';
 
-      <!-- 5. Roadmap -->
-      <div class="option-card" onclick="location.href='roadmap.html'">
-        <div class="card-icon-badge"><i class="fa-solid fa-sitemap"></i></div>
-        <div class="card-info">
-          <div class="card-title">Study Roadmaps</div>
-          <div class="card-desc">Structured Exam & Skill Plans</div>
-        </div>
-        <i class="fa-solid fa-chevron-right arrow-icon"></i>
-      </div>
+        // Fetch subjects corresponding to selected branch (Fallback to CSE if not found)
+        const subjects = branchSubjects[branch] || branchSubjects["Computer Science & Engineering"];
 
-    </div>
+        subjects.forEach(sub => {
+            const cardHTML = `
+                <div class="option-card" onclick="selectSubject('${sub.name}')">
+                    <div class="card-icon-badge"><i class="fa-solid ${sub.icon}"></i></div>
+                    <div class="card-info">
+                        <div class="card-title">${sub.name}</div>
+                        <div class="card-desc">${sub.desc}</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
+                </div>
+            `;
+            grid.insertAdjacentHTML('beforeend', cardHTML);
+        });
+    };
 
-  </div>
+  function selectSubject(subjectName) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const branch = urlParams.get('branch') || 'CSE';
+    
+    // CRITICAL FIX: encodeURIComponent ensures special chars like '&' in "Data Structures & Algorithms" don't break URL parameters
+    window.location.href = `categories.html?branch=${encodeURIComponent(branch)}&subject=${encodeURIComponent(subjectName)}`;
+}
+</script>  </div>
 
 </body>
 </html>
