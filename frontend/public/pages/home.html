@@ -151,44 +151,46 @@
   </div>
 
   <!-- Interactive JavaScript -->
-  <script>
+<!-- HTML Same as before... Replace ONLY the <script> tag at the bottom -->
+<script>
     function toggleNav() {
-      document.getElementById('sideDrawer').classList.toggle('open');
-      document.getElementById('navOverlay').classList.toggle('active');
+        document.getElementById('sideDrawer').classList.toggle('open');
+        document.getElementById('navOverlay').classList.toggle('active');
     }
 
     function openOthersModal() {
-      document.getElementById('othersModalOverlay').classList.add('active');
+        document.getElementById('othersModalOverlay').classList.add('active');
     }
 
     function closeOthersModal() {
-      document.getElementById('othersModalOverlay').classList.remove('active');
+        document.getElementById('othersModalOverlay').classList.remove('active');
     }
 
     function filterBranches() {
-      let input = document.getElementById('branchSearch').value.toLowerCase();
-      let cards = document.getElementsByClassName('branch-card');
-
-      for (let i = 0; i < cards.length; i++) {
-        let title = cards[i].getElementsByClassName('card-title')[0].innerText.toLowerCase();
-        if (title.includes(input)) {
-          cards[i].style.display = "flex";
-        } else {
-          cards[i].style.display = "none";
+        let input = document.getElementById('branchSearch').value.toLowerCase();
+        let cards = document.getElementsByClassName('branch-card');
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].getElementsByClassName('card-title')[0].innerText.toLowerCase();
+            if (title.includes(input)) {
+                cards[i].style.display = "flex";
+            } else {
+                cards[i].style.display = "none";
+            }
         }
-      }
     }
 
     function selectBranch(branchName) {
-      closeOthersModal();
-      alert("Opening study material for: " + branchName);
+        closeOthersModal();
+        // Go to subjects page with parameter
+        window.location.href = `subjects.html?branch=${branchName}`;
     }
 
     function handleLogout() {
-      if(confirm("Are you sure you want to log out of PadhaiHub?")) {
-        window.location.href = "index.html";
-      }
+        if(confirm("Are you sure you want to log out of PadhaiHub?")) {
+            localStorage.removeItem("userEmail"); // Clear session
+            window.location.href = "index.html";  // Go back to login
+        }
     }
-  </script>
+</script>
 </body>
 </html>

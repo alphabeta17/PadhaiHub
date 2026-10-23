@@ -147,27 +147,67 @@
   </div>
 
   <!-- Interactive JavaScript -->
-  <script>
+<!-- HTML Same as before... Replace ONLY the <script> tag at the bottom -->
+<script>
     function handleGoBack() {
-      if (window.history.length > 1) {
         window.history.back();
-      } else {
-        window.location.href = 'index.html'; // Fallback to login page
-      }
     }
 
-    function handleSaveDetails() {
-      const name = document.getElementById('name').value.trim();
-      const university = document.getElementById('university').value.trim();
-      const course = document.getElementById('course').value.trim();
+    async function handleSaveDetails() {
+        const name = document.getElementById('name').value.trim();
+        const university = document.getElementById('university').value.trim();
+        const course = document.getElementById('course').value.trim();
+        const sem = document.getElementById('sem') ? document.getElementById('sem').value.trim() : "";
+        const rollno = document.getElementById('rollno') ? document.getElementById('rollno').value.trim() : "";
+        const address = document.getElementById('address') ? document.getElementById('address').value.trim() : "";
+        const linkedin = document.getElementById('linkedin') ? document.getElementById('linkedin').value.trim() : "";
 
-      if (!name || !university || !course) {
-        alert('Please fill out the primary fields (Name, University/College, Course)');
-        return;
-      }
+        const email = localStorage.getItem("userEmail");
 
-      alert('Details Saved Successfully! Welcome to PadhaiHub, ' + name + '.');
+        if (!name || !university || !course) {
+            alert('Please fill out the primary fields (Name, University/College, Course)');
+            return;
+        }
+
+        if (!email) {
+            alert('Session expired. Please log in again.');
+            window.location.href = 'index.html';
+            return;
+        }
+
+        try {
+            // Fix: Call the absolute backend URL
+            const response = await fetch('http://localhost:5000/api/auth/save-profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    email: email, 
+                    fullName: name, 
+                    university: university, 
+                    course: course,
+                    semester: sem,
+                    roll: rollno,
+                    address: address,
+                    linkedin: linkedin
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('Details Saved Successfully! Welcome, ' + name + '.');
+                // Fix: Redirect to Home Dashboard
+                window.location.href = 'home.html'; 
+            } else {
+                alert(result.message || 'Failed to save details.');
+            }
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            // Fallback for UI testing if DB is down
+            alert('Network error, but moving to dashboard for testing.');
+            window.location.href = 'home.html';
+        }
     }
-  </script>
+</script>
 </body>
 </html>

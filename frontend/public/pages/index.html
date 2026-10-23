@@ -91,25 +91,44 @@
   </div>
 
   <!-- Optional simple interactivity script -->
-  <script>
+<!-- HTML Same as before... Replace ONLY the <script> tag at the bottom -->
+<script>
     function handleFetchOTP() {
-      const btn = document.getElementById('fetchOtpBtn');
-      btn.innerText = "OTP Sent!";
-      btn.classList.add('sent');
-      setTimeout(() => {
-        alert("Your PadhaiHub Verification Code is: 4829");
-      }, 500);
+        const id = document.getElementById('identifier').value;
+        if (!id) {
+            alert('Please enter your Email or Number first.');
+            return;
+        }
+        
+        const btn = document.getElementById('fetchOtpBtn');
+        btn.innerText = "OTP Sent!";
+        btn.classList.add('sent');
+        
+        setTimeout(() => {
+            // Dummy OTP Alert
+            alert("Your PadhaiHub Verification Code is: 4829");
+            document.getElementById('otp').value = "4829"; // Auto-fill for convenience
+        }, 500);
     }
 
     function handleSubmit() {
-      const id = document.getElementById('identifier').value;
-      if (!id) {
-        alert('Please enter your Email or Number');
-        return;
-      }
-      alert('Welcome')
-      window.location.href = 'details.html';
+        const id = document.getElementById('identifier').value;
+        const otp = document.getElementById('otp').value;
+        
+        if (!id || !otp) {
+            alert('Please enter your Email and OTP.');
+            return;
+        }
+
+        if (otp !== "4829") {
+            alert('Invalid OTP. Please enter 4829.');
+            return;
+        }
+
+        // Save email for the next pages
+        localStorage.setItem("userEmail", id);
+        
+        alert('Login Successful! Please complete your profile.');
+        window.location.href = 'details.html'; // Go to Details
     }
-    </script>
-  </body>
-</html>
+</script>
