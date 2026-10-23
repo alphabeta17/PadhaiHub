@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PadhaiHub - Login Page</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#083a28',
+            brandGreen: '#0d533b',
+            brandOrange: '#e87830',
+            brandOrangeHover: '#d8661e',
+            bgBase: '#eef3ee',
+            cardBg: '#e2ece4',
+            inputBg: '#d8e5dc',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Global Base Styling */
+    body {
+      background-color: #eef3ee;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Ambient 3D Geometric Spheres matching the signup theme */
+    .sphere-peach {
+      position: absolute;
+      top: -80px;
+      left: -80px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f8cbb0 0%, #f1aa82 100%);
+      opacity: 0.85;
+      filter: blur(2px);
+      z-index: 0;
+    }
+
+    .sphere-white {
+      position: absolute;
+      top: 38%;
+      right: 10%;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffffff, #d3e1d8);
+      box-shadow: 15px 15px 30px rgba(0, 0, 0, 0.05);
+      z-index: 0;
+    }
+
+    .sphere-green {
+      position: absolute;
+      bottom: -110px;
+      right: -90px;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #a0c2ad 0%, #68987d 100%);
+      opacity: 0.9;
+      filter: blur(1px);
+      z-index: 0;
+    }
+
+    /* Neumorphic Main Card Styling */
+    .neu-card {
+      background: #e2ece4;
+      box-shadow: 
+        22px 22px 45px #c6d3c9, 
+        -22px -22px 45px #ffffff;
+      border-radius: 2.5rem;
+      position: relative;
+      z-index: 10;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    /* Soft Inset Neumorphic Input Pill */
+    .neu-input-pill {
+      background: #d8e5dc;
+      box-shadow: 
+        inset 4px 4px 8px #beccc1, 
+        inset -4px -4px 8px #f2fff7;
+      border-radius: 9999px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .neu-input-pill:focus-within {
+      box-shadow: 
+        inset 6px 6px 10px #b8c7bb, 
+        inset -6px -6px 10px #ffffff,
+        0 0 0 2px rgba(13, 83, 59, 0.25);
+    }
+
+    /* Elevated Circular Icon Badge */
+    .neu-icon-badge {
+      background: #e2ece4;
+      box-shadow: 
+        5px 5px 10px #c6d3c9, 
+        -5px -5px 10px #ffffff;
+      border-radius: 50%;
+    }
+
+    /* Vibrant Orange Action Button */
+    .btn-orange {
+      background: linear-gradient(135deg, #f08238 0%, #d8661e 100%);
+      box-shadow: 
+        6px 6px 16px rgba(216, 102, 30, 0.35), 
+        -2px -2px 10px rgba(255, 255, 255, 0.6);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn-orange:hover {
+      background: linear-gradient(135deg, #f78d46 0%, #e06d24 100%);
+      transform: translateY(-2px);
+      box-shadow: 
+        8px 8px 22px rgba(216, 102, 30, 0.45), 
+        -2px -2px 10px rgba(255, 255, 255, 0.7);
+    }
+
+    .btn-orange:active {
+      transform: translateY(1px);
+      box-shadow: 
+        3px 3px 8px rgba(216, 102, 30, 0.4), 
+        inset 2px 2px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Custom Toast / Modal Overlay Styles */
+    .toast-slide {
+      animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slideDown {
+      0% { opacity: 0; transform: translate(-50%, -20px); }
+      100% { opacity: 1; transform: translate(-50%, 0); }
+    }
+  </style>
+</head>
+
+<body class="relative px-4 py-8 select-none">
+
+  <!-- Ambient 3D Geometric Background Shapes -->
+  <div class="sphere-peach pointer-events-none"></div>
+  <div class="sphere-white pointer-events-none hidden md:block"></div>
+  <div class="sphere-green pointer-events-none"></div>
+
+  <!-- Interactive Toast Notification Popup -->
+  <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 hidden max-w-sm w-full px-4">
+    <div id="toastInner" class="p-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold text-white transition-all">
+      <i id="toastIcon" class="fa-solid fa-circle-check text-lg"></i>
+      <span id="toastText">Logged in successfully!</span>
+    </div>
+  </div>
+
+  <!-- Main Card Container -->
+  <div class="w-full max-w-md mx-auto relative z-10 flex flex-col items-center">
+
+    <!-- Header / Branding Section -->
+    <div class="text-center mb-8 flex flex-col items-center">
+      <!-- Dark Forest Green Square App Icon with Academic Book/Cap Stack -->
+      <div class="w-16 h-16 bg-brandDark rounded-2xl flex items-center justify-center shadow-lg mb-3.5 transform hover:scale-105 transition-transform duration-300">
+        <svg class="w-9 h-9 text-emerald-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6"></path>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-extrabold text-brandDark tracking-tight">PadhaiHub</h1>
+      <p class="text-sm font-medium text-emerald-900/70 mt-1">Your Ultimate Learning Platform</p>
+    </div>
+
+    <!-- Soft Neumorphic Login Card -->
+    <div class="neu-card w-full p-8 sm:p-10">
+      
+      <form id="loginForm" onsubmit="handleFormSubmit(event)" class="space-y-6" novalidate>
+
+        <!-- 1. Email or Phone Number Input Field -->
+        <div>
+          <div class="flex items-center gap-3.5">
+            <!-- Circular Icon Badge -->
+            <div class="neu-icon-badge w-12 h-12 flex-shrink-0 flex items-center justify-center text-brandDark">
+              <i class="fa-regular fa-envelope text-lg"></i>
+            </div>
+            <!-- Inset Soft Pill Input -->
+            <div class="neu-input-pill flex-grow px-5 py-3.5 flex items-center">
+              <input 
+                type="text" 
+                id="userIdentifier" 
+                name="userIdentifier" 
+                placeholder="Enter email / Number" 
+                class="bg-transparent w-full text-sm font-semibold text-brandDark placeholder-emerald-900/40 focus:outline-none"
+                autocomplete="username"
+                required
+              />
+            </div>
+          </div>
+          <!-- Validation Error Message -->
+          <p id="identifierError" class="text-xs text-red-600 font-semibold mt-1.5 ml-16 hidden flex items-center gap-1">
+            <i class="fa-solid fa-circle-exclamation"></i> <span>Please enter a valid email or 10-digit number.</span>
+          </p>
+        </div>
+
+        <!-- 2. Password Input Field -->
+        <div>
+          <div class="flex items-center gap-3.5">
+            <!-- Circular Icon Badge -->
+            <div class="neu-icon-badge w-12 h-12 flex-shrink-0 flex items-center justify-center text-brandDark">
+              <i class="fa-solid fa-lock text-lg"></i>
+            </div>
+            <!-- Inset Soft Pill Input with Eye Toggle -->
+            <div class="neu-input-pill flex-grow px-5 py-3.5 flex items-center justify-between">
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                placeholder="Password" 
+                class="bg-transparent w-full text-sm font-semibold text-brandDark placeholder-emerald-900/40 focus:outline-none"
+                autocomplete="current-password"
+                required
+              />
+              <button 
+                type="button" 
+                onclick="togglePasswordVisibility()" 
+                class="text-emerald-900/50 hover:text-brandDark transition-colors pl-2 focus:outline-none"
+                title="Toggle password visibility"
+              >
+                <i id="eyeIcon" class="fa-regular fa-eye-slash text-base"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Validation Error Message -->
+          <p id="passwordError" class="text-xs text-red-600 font-semibold mt-1.5 ml-16 hidden flex items-center gap-1">
+            <i class="fa-solid fa-circle-exclamation"></i> <span>Password is required (min 4 characters).</span>
+          </p>
+        </div>
+
+        <!-- Card Footer: Signup Link on Left, Orange Submit Button on Right -->
+        <div class="pt-4 flex items-center justify-between">
+          <!-- Left side: "signup?" link -->
+          <a 
+            href="#" 
+            onclick="navigateToSignup(event)" 
+            class="text-brandDark font-extrabold text-base hover:underline hover:text-emerald-950 transition-all focus:outline-none"
+          >
+            signup?
+          </a>
+
+          <!-- Right side: Orange Pill Button -->
+          <button 
+            type="submit" 
+            id="submitBtn" 
+            class="btn-orange px-8 py-3 rounded-full text-white font-bold text-base tracking-wide flex items-center gap-2"
+          >
+            <span id="btnText">Submit</span>
+            <i id="btnSpinner" class="fa-solid fa-circle-notch fa-spin hidden text-sm"></i>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Interactive Redirect Modal (Simulated Signup Page Navigation) -->
+    <div id="signupModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="neu-card w-full max-w-sm p-6 text-center space-y-4">
+        <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center mx-auto text-xl">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <h3 class="text-lg font-bold text-brandDark">Redirecting to Signup</h3>
+        <p class="text-xs font-medium text-emerald-900/70">
+          You are being redirected to the <strong>PadhaiHub Registration Page</strong>.
+        </p>
+        <button 
+          onclick="closeSignupModal()" 
+          class="btn-orange w-full py-2.5 rounded-full text-white font-semibold text-xs tracking-wide"
+        >
+          Got it
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Client-Side JavaScript Logic -->
+  <script>
+    // 1. Password Visibility Toggle Functionality
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const eyeIcon = document.getElementById('eyeIcon');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        eyeIcon.classList.add('text-brandDark');
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        eyeIcon.classList.remove('text-brandDark');
+      }
+    }
+
+    // 2. Email or Mobile Number Regex Validation Helper
+    function validateIdentifier(inputVal) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      // Validates standard 10-digit phone number (with optional country code prefix)
+      const phoneRegex = /^(\+?\d{1,3}[- ]?)?\d{10}$/;
+      return emailRegex.test(inputVal) || phoneRegex.test(inputVal);
+    }
+
+    // 3. Form Submission Handling with Real-time Feedback
+    function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const identifierInput = document.getElementById('userIdentifier');
+      const passwordInput = document.getElementById('password');
+
+      const identifierVal = identifierInput.value.trim();
+      const passwordVal = passwordInput.value.trim();
+
+      const identifierError = document.getElementById('identifierError');
+      const passwordError = document.getElementById('passwordError');
+
+      let isValid = true;
+
+      // Validate Identifier Field
+      if (!identifierVal || !validateIdentifier(identifierVal)) {
+        identifierError.classList.remove('hidden');
+        isValid = false;
+      } else {
+        identifierError.classList.add('hidden');
+      }
+
+      // Validate Password Field
+      if (!passwordVal || passwordVal.length < 4) {
+        passwordError.classList.remove('hidden');
+        isValid = false;
+      } else {
+        passwordError.classList.add('hidden');
+      }
+
+      if (!isValid) {
+        showToast('Please fix the highlighted errors.', 'error');
+        return;
+      }
+
+      // Trigger Submit Loader State
+      setLoading(true);
+
+      // Simulate API Network Request Delay
+      setTimeout(() => {
+        setLoading(false);
+        showToast(`Welcome back to PadhaiHub! Logging in...`, 'success');
+
+        // Reset form inputs after success
+        setTimeout(() => {
+          identifierInput.value = '';
+          passwordInput.value = '';
+        }, 1500);
+      }, 1200);
+    }
+
+    // 4. UI Button Loading State Helper
+    function setLoading(isLoading) {
+      const btnText = document.getElementById('btnText');
+      const btnSpinner = document.getElementById('btnSpinner');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (isLoading) {
+        btnText.textContent = 'Verifying';
+        btnSpinner.classList.remove('hidden');
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.85';
+      } else {
+        btnText.textContent = 'Submit';
+        btnSpinner.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+      }
+    }
+
+    // 5. Toast Notification System
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toastNotification');
+      const toastInner = document.getElementById('toastInner');
+      const toastIcon = document.getElementById('toastIcon');
+      const toastText = document.getElementById('toastText');
+
+      toastText.textContent = message;
+
+      if (type === 'success') {
+        toastInner.className = 'p-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold text-white bg-emerald-800 border border-emerald-600 toast-slide';
+        toastIcon.className = 'fa-solid fa-circle-check text-lg text-emerald-300';
+      } else {
+        toastInner.className = 'p-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold text-white bg-rose-800 border border-rose-600 toast-slide';
+        toastIcon.className = 'fa-solid fa-triangle-exclamation text-lg text-rose-300';
+      }
+
+      toast.classList.remove('hidden');
+
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    // 6. Navigation Link Handlers
+    function navigateToSignup(e) {
+      e.preventDefault();
+      document.getElementById('signupModal').classList.remove('hidden');
+    }
+
+    function closeSignupModal() {
+      document.getElementById('signupModal').classList.add('hidden');
+    }
+
+    // 7. Input Event Listeners to Clear Errors dynamically on typing
+    document.getElementById('userIdentifier').addEventListener('input', function() {
+      if (this.value.trim()) {
+        document.getElementById('identifierError').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('password').addEventListener('input', function() {
+      if (this.value.trim()) {
+        document.getElementById('passwordError').classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
