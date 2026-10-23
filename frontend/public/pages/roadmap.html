@@ -357,4 +357,199 @@
 
     .rank-title {
       font-size: 13px;
-      font
+      font-weight: 700;
+      color: #1b3b2b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rank-meta {
+      font-size: 11px;
+      color: #6a7b72;
+    }
+
+    .rank-stats {
+      font-size: 11px;
+      font-weight: 600;
+      color: #e76f51;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Shapes -->
+  <div class="shape shape-peach"></div>
+  <div class="shape shape-green"></div>
+
+  <div class="app-container">
+    
+    <!-- Top Bar -->
+    <header class="navbar">
+      <div class="nav-left">
+        <a href="subjects.html" class="back-btn" title="Back">
+          <i class="fa-solid fa-chevron-left"></i>
+        </a>
+        <div class="brand-group">
+          <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <div class="brand-name">PadhaiHub</div>
+        </div>
+      </div>
+
+      <div class="category-pill">
+        <i class="fa-solid fa-sitemap"></i> Preparation & Learning Roadmaps
+      </div>
+    </header>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+      
+      <!-- Left: PDF Roadmap Previewer & Details -->
+      <main class="main-section">
+        
+        <!-- Viewer Card -->
+        <div class="viewer-card">
+          <div class="pdf-wrapper">
+            <iframe id="mainPdfViewer" src="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" title="Roadmap Viewer"></iframe>
+          </div>
+        </div>
+
+        <!-- Details Card -->
+        <div class="details-card">
+          <div class="details-header">
+            <div class="rank-badge-large">
+              <i class="fa-solid fa-trophy"></i>
+              <span id="rankBadgeText">Rank #1 Learning Roadmap</span>
+            </div>
+
+            <div class="criteria-box">
+              <span class="criteria-label">Sort By:</span>
+              <select id="criteriaSelect" class="criteria-select" onchange="changeCriteria(this.value)">
+                <option value="popularity" selected>Popularity (Most Saved)</option>
+                <option value="duration">Target Duration (Fastest)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="info-list">
+            <div class="info-item">
+              <span class="info-label">Roadmap Title:</span>
+              <span class="info-value" id="dispTitle">Complete DSA to Advanced Backend Developer Roadmap 2026</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Target Duration:</span>
+              <span class="info-value" id="dispDuration">6 Months Structured Plan</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Download Guide:</span>
+              <span class="info-value">
+                <a href="#" id="dispDownloadLink" target="_blank" class="download-btn">
+                  <i class="fa-solid fa-download"></i> Download Roadmap Chart
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Right Sidebar: Rankings -->
+      <aside class="sidebar-card">
+        <div class="sidebar-title">
+          Top Rated Roadmaps
+          <span id="sortedByText">Sorted by Popularity</span>
+        </div>
+
+        <div class="rankings-list" id="rankingsSidebarList">
+          <!-- Populated via script -->
+        </div>
+      </aside>
+
+    </div>
+
+  </div>
+
+  <script>
+    const roadmapsData = [
+      {
+        title: "Complete DSA to Advanced Backend Developer Roadmap",
+        duration: "6 Months Plan",
+        popularity: 28400,
+        days: 180,
+        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+      },
+      {
+        title: "Gate Exam CS & IT 100-Day Master Strategy",
+        duration: "3 Months Fast-Track",
+        popularity: 21500,
+        days: 90,
+        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+      },
+      {
+        title: "B.Tech Semester Exams 30-Day High Scoring Plan",
+        duration: "30 Days Plan",
+        popularity: 19800,
+        days: 30,
+        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+      },
+      {
+        title: "System Design & Cloud Architecture Prep Guide",
+        duration: "4 Months Plan",
+        popularity: 14200,
+        days: 120,
+        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+      }
+    ];
+
+    let currentCriteria = 'popularity';
+    let sortedRoadmaps = [];
+
+    window.onload = function() {
+      sortAndRender();
+    };
+
+    function changeCriteria(val) {
+      currentCriteria = val;
+      document.getElementById('sortedByText').innerText = `Sorted by ${val === 'popularity' ? 'Popularity' : 'Target Duration'}`;
+      sortAndRender();
+    }
+
+    function sortAndRender() {
+      if (currentCriteria === 'popularity') {
+        sortedRoadmaps = [...roadmapsData].sort((a, b) => b.popularity - a.popularity);
+      } else {
+        sortedRoadmaps = [...roadmapsData].sort((a, b) => a.days - b.days);
+      }
+      selectRoadmap(0);
+
+      const sidebar = document.getElementById('rankingsSidebarList');
+      sidebar.innerHTML = '';
+
+      sortedRoadmaps.forEach((item, index) => {
+        if (index === 0) return;
+        const statText = currentCriteria === 'popularity' ? `${item.popularity} Saves` : `${item.duration}`;
+
+        sidebar.innerHTML += `
+          <div class="rank-item" onclick="selectRoadmap(${index})">
+            <div class="rank-number-badge">#${index + 1}</div>
+            <div class="rank-info">
+              <div class="rank-title">${item.title}</div>
+              <div class="rank-meta">${item.duration}</div>
+              <div class="rank-stats">${statText}</div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function selectRoadmap(index) {
+      const item = sortedRoadmaps[index];
+      document.getElementById('mainPdfViewer').src = item.pdfUrl;
+      document.getElementById('rankBadgeText').innerText = `Rank #${index + 1} Learning Roadmap`;
+      document.getElementById('dispTitle').innerText = item.title;
+      document.getElementById('dispDuration').innerText = item.duration;
+      document.getElementById('dispDownloadLink').href = item.pdfUrl;
+    }
+  </script>
+</body>
+</html>
