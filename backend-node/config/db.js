@@ -3,32 +3,30 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Create MySQL Connection Pool
 export const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT || 3306,
-    ssl: {
-        rejectUnauthorized: false
-    },
+    port: Number(process.env.DB_PORT) || 3306,
+    ssl: { rejectUnauthorized: false },
+    connectTimeout: 30000, // Timeout badhaya gaya hai taaki ETIMEDOUT na aaye
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
-// Function to initialize tables automatically
 export async function initDatabase() {
     try {
         const connection = await pool.getConnection();
         console.log('⚡ Connected to Aiven MySQL Database Successfully!');
 
-        // 1. Users Table
+        // 1. Users Table Creation (Safe without drop)
         await connection.query(`
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 email VARCHAR(255) UNIQUE NOT NULL,
+                password VARCHAR(255) DEFAULT 'default123',
                 fullName VARCHAR(255),
                 university VARCHAR(255),
                 course VARCHAR(100),
@@ -40,7 +38,14 @@ export async function initDatabase() {
             );
         `);
 
-        // 2. Courses/Subjects Table
+        // Safe check: Agar purani table mein password column nahi hai toh add kar do
+        try {
+            await connection.query(`ALTER TABLE users ADD COLUMN password VARCHAR(255) DEFAULT 'default123'`);
+        } catch (e) {
+            // Column pehle se exist karta hai toh ignore karega
+        }
+
+        // 2. Courses Table
         await connection.query(`
             CREATE TABLE IF NOT EXISTS courses (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,7 +55,7 @@ export async function initDatabase() {
             );
         `);
 
-        // 3. Educational Resources Table (PDFs, Videos, Books, PYQs, etc.)
+        // 3. Resources Table
         await connection.query(`
             CREATE TABLE IF NOT EXISTS resources (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -66,7 +71,7 @@ export async function initDatabase() {
             );
         `);
 
-        // Insert Default Courses (Sample Data if empty)
+        // Seed Default Courses if empty
         const [existingCourses] = await connection.query(`SELECT COUNT(*) as count FROM courses`);
         if (existingCourses[0].count === 0) {
             await connection.query(`
@@ -79,21 +84,17 @@ export async function initDatabase() {
                 ('EDC', 'Electronic Devices & Circuits', 'ECE');
             `);
 
-            // Insert Initial Sample Educational Content with Views, Likes & Ratings
             await connection.query(`
                 INSERT INTO resources (course_code, title, description, type, url, views_count, likes_count, rating) VALUES
-                ('DSA', 'Striver A2Z DSA Course & Notes', 'Complete roadmap with video tutorials and practice code for Data Structures.', 'roadmap', 'https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2/', 1250, 340, 4.90),
-                ('DSA', 'Abdul Bari Algorithms Playlist', 'High quality visualization videos explaining asymptotic analysis and dynamic programming.', 'video', 'https://www.youtube.com/playlist?list=PLDN4rrl4ha5o0EL02X0OAGK26A4fM3d9b', 2400, 890, 4.95),
-                ('DSA', 'Data Structures Gate PYQs (2015-2024)', 'Previous years solved questions with explanations.', 'pyq', 'https://geeksforgeeks.org', 650, 120, 4.50),
-                ('JAVA', 'Java Complete Reference Book PDF', 'Standard reference textbook by Herbert Schildt.', 'book', 'https://example.com/java.pdf', 800, 210, 4.70),
-                ('DBMS', 'DBMS Gate Smashers Full Playlist', 'Quick revision videos covering ER Diagrams, SQL Queries, and Normalization.', 'video', 'https://youtube.com', 3100, 950, 4.85),
-                ('OS', 'Galvin Operating System Concepts', 'Classic Dinosaur book for OS core concepts and memory management.', 'pdf', 'https://example.com/os.pdf', 450, 90, 4.30);
+                ('DSA', 'Striver A2Z DSA Course & Notes', 'Complete roadmap with video tutorials and practice code.', 'roadmap', 'https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2/', 1250, 340, 4.90),
+                ('DSA', 'Abdul Bari Algorithms Playlist', 'High quality visualization videos explaining algorithms.', 'video', 'https://www.youtube.com/playlist?list=PLDN4rrl4ha5o0EL02X0OAGK26A4fM3d9b', 2400, 890, 4.95),
+                ('DBMS', 'DBMS Gate Smashers Full Playlist', 'Quick revision videos covering ER Diagrams and SQL.', 'video', 'https://youtube.com', 3100, 950, 4.85);
             `);
-            console.log('🌱 Sample Courses and Educational Resources Seeded into Database!');
+            console.log('🌱 Sample Data Seeded into Database!');
         }
 
         connection.release();
     } catch (error) {
-        console.error('❌ Error initializing database tables:', error);
+        console.error('❌ Error initializing database tables:', error.message);
     }
 }
