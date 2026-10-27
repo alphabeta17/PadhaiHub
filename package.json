@@ -5,7 +5,8 @@
     "dev": "concurrently \"npm run dev --prefix backend-node\" \"npm run dev --prefix frontend\""
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "serve": "^14.2.6"
   },
   "dependencies": {
     "cors": "^2.8.6"

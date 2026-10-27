@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.routes.js'; 
 import { fetchYoutubeVideos, categorizeVideosWithLlama } from './services.js';  
 import { initDatabase } from './config/db.js';// Make sure file name case matches exactly
-
+import { pool, initDatabase } from './config/db.js';
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -89,5 +89,40 @@ app.get('/api/categorize/:topic', async (req, res) => {
     } catch (error) {
         console.error("❌ Error in categorization pipeline:", error);
         res.status(500).json({ success: false, error: error.message || "Pipeline failed." });
+    }
+});
+
+app.post('/api/login', async (req, res) => {
+    try {
+        const { role, identifier, password } = req.body;
+        
+        let query = "";
+        let values = [];
+
+        if (role === 'student') {
+            // Maan lijiye aapke users table mein roll_no, password aur role columns hain
+            query = "SELECT * FROM users WHERE roll_no = ? AND password = ? AND role = 'student'";
+            values = [identifier, password];
+        } else if (role === 'faculty') {
+            query = "SELECT * FROM users WHERE faculty_id = ? AND password = ? AND role = 'faculty'";
+            values = [identifier, password];
+        } else if (role === 'admin') {
+            query = "SELECT * FROM users WHERE admin_key = ? AND role = 'admin'";
+            values = [identifier]; // Admin ke liye sirf key/password
+        } else if (role === 'visitor') {
+            return res.json({ success: true, message: "Visitor access granted." });
+        }
+
+        const [rows] = await db.execute(query, values);
+
+        if (rows.length > 0 || role === 'visitor') {
+            res.json({ success: true, message: "Login successful!", user: rows[0] });
+        } else {
+            res.status(401).json({ success: false, error: "Invalid credentials or user not found." });
+        }
+
+    } catch (error) {
+        console.error("Login database error:", error);
+        res.status(500).json({ success: false, error: "Server error during login." });
     }
 });

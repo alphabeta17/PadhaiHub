@@ -407,42 +407,58 @@
     }
 
     // Handle Form Submission
-    function handleLoginSubmit(event) {
-      event.preventDefault();
+    async function handleLoginSubmit(event) {
+    event.preventDefault();
+    
+    const identifier = document.getElementById('field1Input').value;
+    const password = currentRole !== 'visitor' && currentRole !== 'admin' ? document.getElementById('field2Input').value : (currentRole === 'admin' ? identifier : '');
+    
+    const msgBox = document.getElementById('msgBox');
+    msgBox.classList.remove('hidden', 'bg-rose-200/80', 'text-rose-900', 'bg-emerald-200/80', 'text-emerald-900');
+    
+    // Show loading state
+    msgBox.classList.add('bg-emerald-200/80', 'text-emerald-900');
+    msgBox.textContent = `Verifying credentials with database...`;
 
-      const f1Value = document.getElementById('field1Input').value;
-      const f2Value = document.getElementById('field2Input').value;
-      const msgBox = document.getElementById('msgBox');
+    try {
+        // Send request to backend Node.js server
+        const response = await fetch('http://localhost:5000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                role: currentRole,
+                identifier: identifier,
+                password: password
+            })
+        });
 
-      msgBox.classList.remove('hidden', 'bg-rose-200/80', 'text-rose-900', 'bg-emerald-200/80', 'text-emerald-900');
+        const result = await response.json();
 
-      if (currentRole === 'student') {
-        msgBox.classList.add('bg-emerald-200/80', 'text-emerald-900');
-        msgBox.textContent = `Logging in Student (Roll No: ${f1Value})... Welcome!`;
-      } else if (currentRole === 'faculty') {
-        msgBox.classList.add('bg-emerald-200/80', 'text-emerald-900');
-        msgBox.textContent = `Logging in Faculty (ID: ${f1Value})... Welcome!`;
-      } else if (currentRole === 'admin') {
-        msgBox.classList.add('bg-emerald-200/80', 'text-emerald-900');
-        msgBox.textContent = `Admin Access Verified! Redirecting to panel...`;
-      } else if (currentRole === 'visitor') {
-        msgBox.classList.add('bg-emerald-200/80', 'text-emerald-900');
-        msgBox.textContent = `Welcome Curious Visitor! Redirecting to homepage...`;
-      }
+        if (response.ok && result.success) {
+            msgBox.textContent = `✅ Login Successful! Redirecting...`;
+            
+            // Save user session in localStorage if needed
+            localStorage.setItem('userRole', currentRole);
+            localStorage.setItem('userIdentifier', identifier);
 
-      // Simulated navigation after 1.2 seconds
-      setTimeout(() => {
-        window.location.href = 'home.html';
-      }, 1200);
+            setTimeout(() => {
+                window.location.href = 'home.html';
+            }, 1000);
+        } else {
+            msgBox.classList.remove('bg-emerald-200/80', 'text-emerald-900');
+            msgBox.classList.add('bg-rose-200/80', 'text-rose-900');
+            msgBox.textContent = `❌ ${result.error || 'Authentication failed. Please check your details.'}`;
+        }
+
+    } catch (err) {
+        console.error("Network or server error:", err);
+        msgBox.classList.remove('bg-emerald-200/80', 'text-emerald-900');
+        msgBox.classList.add('bg-rose-200/80', 'text-rose-900');
+        msgBox.textContent = `❌ Network error: Could not reach backend server.`;
     }
-
-    function handleSignupClick(e) {
-      e.preventDefault();
-      const msgBox = document.getElementById('msgBox');
-      msgBox.classList.remove('hidden', 'bg-rose-200/80', 'text-rose-900');
-      msgBox.classList.add('bg-emerald-200/80', 'text-emerald-900');
-      msgBox.textContent = "Redirecting to Signup registration page...";
-    }
+}
   </script>
 </body>
 </html>
