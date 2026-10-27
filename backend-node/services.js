@@ -1,5 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import './config/env.js';
 
 // 1. Fetch YouTube Videos with Tightened Search Query
 export async function fetchYoutubeVideos(searchQuery, category = 'oneshot') {

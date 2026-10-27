@@ -1,12 +1,11 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import './config/env.js';
 import authRoutes from './routes/auth.routes.js'; 
 import { fetchYoutubeVideos, categorizeVideosWithLlama } from './services.js';  
 import { pool, initDatabase } from './config/db.js';
-dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -126,10 +125,23 @@ app.post('/api/login', async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 async function startServer() {
-    await initDatabase();
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            await initDatabase();
+            break;
+        } catch (error) {
+            if (attempt === 3) {
+                throw error;
+            }
 
-    app.listen(PORT, () => {
-        console.log(`Server is running live on http://localhost:${PORT}`);
+            const delay = attempt * 2000;
+            console.warn(`Database initialization attempt ${attempt}/3 failed; retrying in ${delay / 1000}s.`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server is running on port ${PORT}`);
     });
 }
 
