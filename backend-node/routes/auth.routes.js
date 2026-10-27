@@ -1,6 +1,7 @@
 import express from 'express';
 import '../config/env.js';
 import { pool } from '../config/db.js';
+import { createSessionToken, requireSession } from '../config/session.js';
 import nodemailer from 'nodemailer';
 
 const router = express.Router();
@@ -14,6 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const otpStore = new Map();
+const verifiedOtpStore = new Map();
 
 // 1. Send OTP
 router.post('/send-otp', async (req, res) => {
@@ -28,6 +30,7 @@ router.post('/send-otp', async (req, res) => {
 
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
         otpStore.set(email, otp);
+        verifiedOtpStore.delete(email);
 
         await transporter.sendMail({
             from: `"PadhaiHub" <${process.env.EMAIL_USER}>`,
@@ -61,6 +64,7 @@ router.post('/verify-otp', (req, res) => {
     }
 
     otpStore.delete(email);
+    verifiedOtpStore.set(email, Date.now() + 5 * 60 * 1000);
     res.status(200).json({ success: true, message: "OTP verified successfully." });
 });
 
@@ -73,25 +77,25 @@ router.post('/save-profile', async (req, res) => {
             return res.status(400).json({ success: false, message: "Email is required." });
         }
 
-        const userPassword = password || "default_pass123";
+        if (!password || !verifiedOtpStore.has(email) || verifiedOtpStore.get(email) < Date.now()) {
+            verifiedOtpStore.delete(email);
+            return res.status(401).json({ success: false, message: "Verify your email before creating an account." });
+        }
 
-        const query = `
-            INSERT INTO users (email, password, fullName, university, course, semester, roll, address, linkedin) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE 
-            password = VALUES(password),
-            fullName = VALUES(fullName), 
-            university = VALUES(university), 
-            course = VALUES(course), 
-            semester = VALUES(semester), 
-            roll = VALUES(roll), 
-            address = VALUES(address), 
-            linkedin = VALUES(linkedin)
-        `;
-        
-        await pool.query(query, [email, userPassword, fullName || '', university || '', course || '', semester || '', roll || '', address || '', linkedin || '']);
-        
-        res.status(200).json({ success: true, message: "Profile saved successfully" });
+        await pool.query(
+            `INSERT INTO users (email, password, fullName, university, course, semester, roll, address, linkedin)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [email, password, fullName || '', university || '', course || '', semester || '', roll || '', address || '', linkedin || '']
+        );
+        verifiedOtpStore.delete(email);
+
+        const user = { email, fullName, university, course, semester, roll, address, linkedin };
+        res.status(201).json({
+            success: true,
+            message: "Profile saved successfully",
+            user,
+            token: createSessionToken(email)
+        });
 
     } catch (error) {
         console.error("❌ Exact Database Error in save-profile:", error.message);
@@ -120,15 +124,84 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ success: false, message: "Incorrect password. Please try again." });
         }
 
-        res.status(200).json({ 
+        const profile = {
+            id: user.id,
+            email: user.email,
+            fullName: user.fullName,
+            university: user.university,
+            course: user.course,
+            semester: user.semester,
+            roll: user.roll,
+            address: user.address,
+            linkedin: user.linkedin,
+            created_at: user.created_at
+        };
+
+        res.status(200).json({
             success: true, 
             message: "Login successful!",
-            user: { email: user.email, fullName: user.fullName }
+            user: profile,
+            token: createSessionToken(user.email)
         });
 
     } catch (error) {
         console.error("❌ Login Error:", error.message);
         res.status(500).json({ success: false, message: `Server Error: ${error.message}` });
+    }
+});
+
+router.get('/profile', requireSession, async (req, res) => {
+    try {
+        const [rows] = await pool.query(
+            `SELECT id, email, fullName, university, course, semester, roll, address, linkedin, created_at
+             FROM users WHERE email = ?`,
+            [req.user.email]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, message: "Profile not found." });
+        }
+
+        res.json({ success: true, user: rows[0] });
+    } catch (error) {
+        console.error("Profile load error:", error);
+        res.status(500).json({ success: false, message: "Failed to load profile." });
+    }
+});
+
+router.put('/profile', requireSession, async (req, res) => {
+    try {
+        const { fullName, university, course, semester, roll, address, linkedin } = req.body;
+
+        if (!fullName?.trim() || !university?.trim() || !course?.trim()) {
+            return res.status(400).json({ success: false, message: "Name, university, and course are required." });
+        }
+
+        const [result] = await pool.query(
+            `UPDATE users
+             SET fullName = ?, university = ?, course = ?, semester = ?, roll = ?, address = ?, linkedin = ?
+             WHERE email = ?`,
+            [fullName.trim(), university.trim(), course.trim(), semester?.trim() || '', roll?.trim() || '',
+                address?.trim() || '', linkedin?.trim() || '', req.user.email]
+        );
+
+        if (result.affectedRows === 0) {
+            const [rows] = await pool.query('SELECT email FROM users WHERE email = ?', [req.user.email]);
+            if (rows.length === 0) {
+                return res.status(404).json({ success: false, message: "Profile not found." });
+            }
+        }
+
+        const [rows] = await pool.query(
+            `SELECT id, email, fullName, university, course, semester, roll, address, linkedin, created_at
+             FROM users WHERE email = ?`,
+            [req.user.email]
+        );
+
+        res.json({ success: true, message: "Profile updated successfully.", user: rows[0] });
+    } catch (error) {
+        console.error("Profile update error:", error);
+        res.status(500).json({ success: false, message: "Failed to update profile." });
     }
 });
 

@@ -138,14 +138,18 @@
     /* Main Grid Layout */
     .content-grid {
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: minmax(0, 1fr) 380px;
       gap: 24px;
     }
 
     @media (max-width: 1024px) {
       .content-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
       }
+    }
+
+    .content-grid > * {
+      min-width: 0;
     }
 
     .main-section {
@@ -177,6 +181,29 @@
       width: 100%;
       height: 100%;
       border: none;
+    }
+
+    .resource-preview-message {
+      display: grid;
+      place-content: center;
+      gap: 12px;
+      height: 100%;
+      padding: 24px;
+      color: #4a5d53;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 12px; }
+      .navbar { align-items: flex-start; flex-direction: column; gap: 12px; padding: 14px; border-radius: 20px; }
+      .brand-name { font-size: 17px; }
+      .category-pill { max-width: 100%; white-space: normal; }
+      .viewer-card, .details-card, .sidebar-card { padding: 14px; border-radius: 22px; }
+      .pdf-wrapper { height: min(62vh, 480px); min-height: 260px; }
+      .info-item { flex-direction: column; gap: 2px; }
+      .info-label { min-width: 0; }
+      .sidebar-title { gap: 8px; font-size: 16px; }
     }
 
     /* Details Card */
@@ -316,14 +343,18 @@
 
     .rank-item {
       display: flex;
+      width: 100%;
       gap: 12px;
       background: #eef2eb;
       padding: 12px;
+      border: 0;
       border-radius: 20px;
       box-shadow: inset 3px 3px 6px #cfd6cc, inset -3px -3px 6px #ffffff;
       cursor: pointer;
       transition: all 0.2s ease;
       align-items: center;
+      text-align: left;
+      font: inherit;
     }
 
     .rank-item:hover {
@@ -410,7 +441,7 @@
         <!-- Viewer Card -->
         <div class="viewer-card">
           <div class="pdf-wrapper">
-            <iframe id="mainPdfViewer" src="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" title="Book Reader"></iframe>
+            <div class="resource-preview-message" id="readerNotice">Select a title, then open its Google Books listing to check for a preview or library copy.</div>
           </div>
         </div>
 
@@ -441,10 +472,10 @@
               <span class="info-value" id="dispAuthor">Thomas H. Cormen, Charles E. Leiserson</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Read / Download:</span>
+              <span class="info-label">Book listing:</span>
               <span class="info-value">
                 <a href="#" id="dispReadLink" target="_blank" class="read-btn">
-                  <i class="fa-solid fa-book-open-reader"></i> Open Full E-Book
+                  <i class="fa-solid fa-book-open-reader"></i> Search Google Books
                 </a>
               </span>
             </div>
@@ -476,28 +507,24 @@
         author: "Thomas H. Cormen & Co.",
         rating: 4.9,
         reads: 45000,
-        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       },
       {
         title: "Operating System Concepts",
         author: "Abraham Silberschatz",
         rating: 4.8,
         reads: 38000,
-        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       },
       {
         title: "Database System Concepts",
         author: "Avi Silberschatz, Henry F. Korth",
         rating: 4.7,
         reads: 31000,
-        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       },
       {
         title: "Computer Networks (5th Edition)",
         author: "Andrew S. Tanenbaum",
         rating: 4.6,
         reads: 27000,
-        pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       }
     ];
 
@@ -505,6 +532,9 @@
     let sortedBooks = [];
 
     window.onload = function() {
+      document.querySelector('.back-btn').href = new URLSearchParams(window.location.search).has('subject')
+        ? `categories.html?${new URLSearchParams(window.location.search)}`
+        : 'home.html';
       sortAndRender();
     };
 
@@ -526,25 +556,27 @@
         const statText = currentCriteria === 'rating' ? `⭐ ${item.rating} Rating` : `${item.reads} Reads`;
 
         sidebar.innerHTML += `
-          <div class="rank-item" onclick="selectBook(${index})">
-            <div class="rank-number-badge">#${index + 1}</div>
-            <div class="rank-info">
-              <div class="rank-title">${item.title}</div>
-              <div class="rank-meta">${item.author}</div>
-              <div class="rank-stats">${statText}</div>
-            </div>
-          </div>
+          <button type="button" class="rank-item" onclick="selectBook(${index})">
+            <span class="rank-number-badge">#${index + 1}</span>
+            <span class="rank-info">
+              <span class="rank-title">${item.title}</span>
+              <span class="rank-meta">${item.author}</span>
+              <span class="rank-stats">${statText}</span>
+            </span>
+          </button>
         `;
       });
     }
 
     function selectBook(index) {
       const item = sortedBooks[index];
-      document.getElementById('mainPdfViewer').src = item.pdfUrl;
+      const sourceUrl = `https://books.google.com/books?q=${encodeURIComponent(`${item.title} ${item.author}`)}`;
+      document.getElementById('readerNotice').textContent = `Search Google Books for ${item.title} to check available previews and editions.`;
       document.getElementById('rankBadgeText').innerText = `Rank #${index + 1} Reference Book`;
       document.getElementById('dispTitle').innerText = item.title;
       document.getElementById('dispAuthor').innerText = item.author;
-      document.getElementById('dispReadLink').href = item.pdfUrl;
+      document.getElementById('dispReadLink').href = sourceUrl;
+      document.getElementById('dispReadLink').rel = 'noopener noreferrer';
     }
   </script>
 </body>

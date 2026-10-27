@@ -189,6 +189,40 @@
       color: #1b3b2b;
       opacity: 0.6;
     }
+
+    .subject-search {
+      width: 100%;
+      border: 0;
+      border-radius: 18px;
+      padding: 14px 18px;
+      background: #eef2eb;
+      color: #1b3b2b;
+      box-shadow: inset 4px 4px 8px #cfd6cc, inset -4px -4px 8px #fff;
+      font: inherit;
+      font-size: 16px;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 24px;
+      text-align: center;
+      color: #6a7b72;
+    }
+
+    .option-card {
+      width: 100%;
+      border: 0;
+      text-align: left;
+      font: inherit;
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 14px; }
+      .navbar { padding: 12px 14px; border-radius: 20px; }
+      .brand-name { font-size: 16px; }
+      .grid-container { grid-template-columns: 1fr; gap: 14px; }
+      .option-card { padding: 18px; border-radius: 20px; }
+    }
   </style>
 </head>
 <body>
@@ -213,102 +247,120 @@
     </header>
 
     <!-- Options Selection Grid -->
+   <input class="subject-search" type="search" id="subjectSearch" placeholder="Search subjects in this branch" aria-label="Search subjects">
    <div class="grid-container" id="subjectsGrid">
     <!-- Dynamically populated by script -->
 </div>
 
 <script>
-    // Vast & Comprehensive Subject Database mapped across Engineering Branches
     const branchSubjects = {
-        "Computer Science & Engineering": [
-            { name: "Data Structures & Algorithms", icon: "fa-code", desc: "Arrays, Trees, Graphs, DP & Sorting" },
-            { name: "Database Management Systems", icon: "fa-database", desc: "SQL, Relational Algebra, ER Models & Normalization" },
-            { name: "Operating Systems", icon: "fa-laptop-code", desc: "CPU Scheduling, Synchronization, Deadlocks & Memory" },
-            { name: "Object Oriented Programming", icon: "fa-mug-hot", desc: "Classes, Inheritance, Polymorphism & STL" },
-            { name: "Computer Networks", icon: "fa-network-wired", desc: "TCP/IP, OSI Layers, Routing & Network Security" },
-            { name: "Software Engineering", icon: "fa-diagram-project", desc: "SDLC Models, SRS, DFD & Testing Methodologies" },
-            { name: "Artificial Intelligence & ML", icon: "fa-robot", desc: "Supervised Learning, Neural Networks & NLP" },
-            { name: "Theory of Computation", icon: "fa-brain", desc: "Automata, Turing Machines & Complexity Theory" },
-            { name: "Computer Architecture", icon: "fa-microchip", desc: "Pipelining, Cache Memory & Instruction Sets" }
-        ],
-        "Mechanical Engineering": [
-            { name: "Engineering Thermodynamics", icon: "fa-fire", desc: "Laws of Thermodynamics, Entropy & Power Cycles" },
-            { name: "Fluid Mechanics", icon: "fa-water", desc: "Fluid Statics, Kinematics & Navier-Stokes Equations" },
-            { name: "Strength of Materials", icon: "fa-dumbbell", desc: "Stress, Strain, Bending Moments & Shear Forces" },
-            { name: "Theory of Machines", icon: "fa-gears", desc: "Kinematics, Cams, Governors & Balancing" },
-            { name: "Machine Design", icon: "fa-pencil-ruler", desc: "Design of Shafts, Gears, Bearings & Fasteners" },
-            { name: "Heat Transfer", icon: "fa-temperature-high", desc: "Conduction, Convection, Radiation & Heat Exchangers" }
-        ],
-        "Electronics & Communication": [
-            { name: "Digital Electronics", icon: "fa-microchip", desc: "Logic Gates, Boolean Algebra, Flip-Flops & FSM" },
-            { name: "Analog Circuits", icon: "fa-wave-square", desc: "Diodes, BJT, MOSFET Amplifiers & Op-Amps" },
-            { name: "Signals and Systems", icon: "fa-signal", desc: "Fourier Transforms, Laplace & LTI Systems" },
-            { name: "Microprocessors & Microcontrollers", icon: "fa-cpu", desc: "8086 Architecture, Assembly & Interfacing" },
-            { name: "Communication Systems", icon: "fa-tower-broadcast", desc: "AM/FM Modulation, Information Theory & Digital Comm" }
-        ],
-        "Electrical Engineering": [
-            { name: "Electrical Machines", icon: "fa-bolt", desc: "Transformers, DC Machines & Induction Motors" },
-            { name: "Power Systems", icon: "fa-plug", desc: "Generation, Transmission, Fault Analysis & Protection" },
-            { name: "Control Systems", icon: "fa-sliders", desc: "Transfer Functions, Bode Plots & Nyquist Stability" },
-            { name: "Power Electronics", icon: "fa-charging-station", desc: "Thyristors, Inverters, Choppers & Rectifiers" },
-            { name: "Circuit Theory", icon: "fa-bolt-lightning", desc: "Network Theorems, Transient Analysis & Two-Port Networks" }
-        ],
-        "Civil Engineering": [
-            { name: "Structural Analysis", icon: "fa-building", desc: "Trusses, Arches, Cables & Matrix Methods" },
-            { name: "Geotechnical Engineering", icon: "fa-mountain", desc: "Soil Mechanics, Foundation Design & Shear Strength" },
-            { name: "Transportation Engineering", icon: "fa-road", desc: "Highway Alignment, Traffic Design & Pavements" },
-            { name: "Environmental Engineering", icon: "fa-seedling", desc: "Water Treatment, Air Pollution & Waste Management" },
-            { name: "Surveying & Geomatics", icon: "fa-compass", desc: "Levelling, Theodolite & GPS Surveying Techniques" }
-        ],
-        "Data Science & AI": [
-            { name: "Python for Data Science", icon: "fa-python", desc: "NumPy, Pandas, Matplotlib & Data Wrangling" },
-            { name: "Machine Learning Algorithms", icon: "fa-chart-line", desc: "Regression, Classification, SVM & Random Forests" },
-            { name: "Deep Learning", icon: "fa-brain", desc: "CNNs, RNNs, Transformers & PyTorch Framework" },
-            { name: "Big Data Analytics", icon: "fa-database", desc: "Hadoop, Spark, and Distributed Data Processing" }
-        ]
+        "Computer Science & Engineering": ["Data Structures & Algorithms", "Database Management Systems", "Operating Systems", "Object Oriented Programming", "Computer Networks", "Software Engineering", "Artificial Intelligence", "Machine Learning", "Theory of Computation", "Computer Architecture", "Compiler Design", "Web Development", "Cloud Computing", "Cyber Security", "Distributed Systems", "Data Mining", "Mobile App Development"],
+        "Mechanical Engineering": ["Engineering Thermodynamics", "Fluid Mechanics", "Strength of Materials", "Theory of Machines", "Machine Design", "Heat Transfer", "Manufacturing Processes", "Engineering Materials", "CAD/CAM", "Refrigeration & Air Conditioning", "Industrial Engineering", "Finite Element Analysis"],
+        "Electronics & Communication": ["Digital Electronics", "Analog Circuits", "Signals and Systems", "Microprocessors & Microcontrollers", "Communication Systems", "Electromagnetic Theory", "VLSI Design", "Digital Signal Processing", "Control Systems", "Embedded Systems", "Wireless Communication", "Antenna & Wave Propagation"],
+        "Electrical Engineering": ["Electrical Machines", "Power Systems", "Control Systems", "Power Electronics", "Circuit Theory", "Electrical Measurements", "Network Analysis", "Switchgear & Protection", "High Voltage Engineering", "Electrical Drives", "Renewable Energy Systems", "Signals & Systems"],
+        "Civil Engineering": ["Structural Analysis", "Geotechnical Engineering", "Transportation Engineering", "Environmental Engineering", "Surveying & Geomatics", "Building Materials", "Concrete Technology", "Fluid Mechanics", "Hydrology & Water Resources", "Construction Planning", "Steel Structures", "Foundation Engineering"],
+        "Data Science & AI": ["Python for Data Science", "Probability & Statistics", "Machine Learning", "Deep Learning", "Natural Language Processing", "Computer Vision", "Big Data Analytics", "Data Mining", "Reinforcement Learning", "Generative AI", "Data Visualization", "MLOps"],
+        "Robotics & Automation": ["Robot Kinematics", "Robot Dynamics", "Sensors & Actuators", "Industrial Robotics", "Control Systems", "Machine Vision", "Embedded Systems", "PLC & SCADA", "Autonomous Mobile Robots", "Robot Operating System (ROS)"],
+        "Mathematics": ["Engineering Mathematics I", "Engineering Mathematics II", "Linear Algebra", "Calculus", "Differential Equations", "Probability & Statistics", "Discrete Mathematics", "Numerical Methods", "Complex Analysis", "Graph Theory", "Optimization Techniques"],
+        "Physics": ["Engineering Mechanics", "Electromagnetism", "Optics", "Quantum Mechanics", "Solid State Physics", "Thermodynamics", "Waves & Oscillations", "Modern Physics", "Electronics", "Nuclear Physics"],
+        "Biotechnology": ["Cell Biology", "Molecular Biology", "Biochemistry", "Genetics", "Microbiology", "Bioprocess Engineering", "Immunology", "Bioinformatics", "Genetic Engineering", "Enzyme Technology", "Plant Biotechnology"],
+        "Aeronautical Engineering": ["Aerodynamics", "Aircraft Structures", "Flight Mechanics", "Aircraft Propulsion", "Avionics", "Aircraft Performance", "Aerospace Materials", "Gas Turbine Engines", "Computational Fluid Dynamics", "Space Dynamics"],
+        "Aerospace Engineering": ["Aerodynamics", "Aircraft Structures", "Flight Mechanics", "Propulsion Systems", "Orbital Mechanics", "Spacecraft Systems", "Avionics", "Aerospace Materials", "Rocket Propulsion", "Computational Fluid Dynamics"],
+        "Chemical Engineering": ["Chemical Process Calculations", "Fluid Mechanics", "Heat Transfer", "Mass Transfer", "Chemical Reaction Engineering", "Process Control", "Thermodynamics", "Separation Processes", "Plant Design", "Polymer Technology", "Process Safety"],
+        "Environmental Studies": ["Environmental Chemistry", "Ecology & Biodiversity", "Water & Wastewater Treatment", "Air Pollution Control", "Solid Waste Management", "Environmental Impact Assessment", "Climate Change", "Sustainable Development", "Environmental Microbiology"],
+        "Architecture & Design": ["Architectural Design", "Building Construction", "Architectural History", "Building Materials", "Building Services", "Urban Planning", "Landscape Architecture", "Sustainable Architecture", "Structures for Architects", "Computer-Aided Design"],
+        "Cyber Security": ["Network Security", "Cryptography", "Ethical Hacking", "Digital Forensics", "Application Security", "Cloud Security", "Security Operations", "Identity & Access Management", "Secure Software Design", "Incident Response"],
+        "Information Technology": ["Data Structures & Algorithms", "Database Management Systems", "Operating Systems", "Computer Networks", "Web Technologies", "Software Engineering", "Cloud Computing", "Information Security", "Distributed Systems", "Mobile Computing", "Data Warehousing"],
+        "Biomedical Engineering": ["Biomedical Instrumentation", "Human Anatomy & Physiology", "Medical Imaging", "Biomechanics", "Biomaterials", "Biomedical Signal Processing", "Clinical Engineering", "Rehabilitation Engineering", "Medical Electronics"],
+        "Agricultural Engineering": ["Soil & Water Conservation", "Irrigation Engineering", "Farm Machinery", "Agricultural Process Engineering", "Watershed Management", "Renewable Energy in Agriculture", "Post-Harvest Technology", "Protected Cultivation", "Agricultural Structures"],
+        "Industrial Engineering": ["Operations Research", "Production Planning & Control", "Quality Engineering", "Supply Chain Management", "Work Study & Ergonomics", "Manufacturing Systems", "Operations Management", "Reliability Engineering", "Lean Manufacturing"],
+        "Automobile Engineering": ["Automotive Engines", "Vehicle Dynamics", "Automotive Transmission", "Automotive Electrical Systems", "Vehicle Design", "Electric & Hybrid Vehicles", "Automotive Electronics", "Engine Emissions", "Automotive Manufacturing"],
+        "Mechatronics Engineering": ["Mechatronics Systems", "Sensors & Actuators", "Microcontrollers", "Industrial Automation", "Control Engineering", "Robotics", "PLC & SCADA", "Embedded Systems", "Machine Vision"],
+        "Mining Engineering": ["Mine Surveying", "Mine Ventilation", "Rock Mechanics", "Surface Mining", "Underground Mining", "Mine Safety", "Mineral Processing", "Mine Planning", "Environmental Management in Mining"]
     };
 
-    window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        let branch = urlParams.get('branch') || 'Computer Science & Engineering';
-        
-        // Normalize branch names if coming from short forms
-        if (branch === 'CSE') branch = 'Computer Science & Engineering';
-        else if (branch === 'ME') branch = 'Mechanical Engineering';
-        else if (branch === 'ECE') branch = 'Electronics & Communication';
-        else if (branch === 'EE') branch = 'Electrical Engineering';
-        else if (branch === 'Civil') branch = 'Civil Engineering';
-
-        document.querySelector('.brand-name').innerText = `PadhaiHub - ${branch}`;
-        
-        const grid = document.getElementById('subjectsGrid');
-        grid.innerHTML = '';
-
-        // Fetch subjects corresponding to selected branch (Fallback to CSE if not found)
-        const subjects = branchSubjects[branch] || branchSubjects["Computer Science & Engineering"];
-
-        subjects.forEach(sub => {
-            const cardHTML = `
-                <div class="option-card" onclick="selectSubject('${sub.name}')">
-                    <div class="card-icon-badge"><i class="fa-solid ${sub.icon}"></i></div>
-                    <div class="card-info">
-                        <div class="card-title">${sub.name}</div>
-                        <div class="card-desc">${sub.desc}</div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right arrow-icon"></i>
-                </div>
-            `;
-            grid.insertAdjacentHTML('beforeend', cardHTML);
-        });
+    const branchAliases = {
+        CSE: "Computer Science & Engineering",
+        ME: "Mechanical Engineering",
+        ECE: "Electronics & Communication",
+        EE: "Electrical Engineering",
+        Civil: "Civil Engineering",
+        "Environmental Engineering": "Environmental Studies",
+        "Computer Science": "Computer Science & Engineering"
     };
 
-  function selectSubject(subjectName) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const branch = urlParams.get('branch') || 'CSE';
-    
-    // CRITICAL FIX: encodeURIComponent ensures special chars like '&' in "Data Structures & Algorithms" don't break URL parameters
-    window.location.href = `categories.html?branch=${encodeURIComponent(branch)}&subject=${encodeURIComponent(subjectName)}`;
-}
+    const iconByBranch = {
+        "Computer Science & Engineering": "fa-code",
+        "Mechanical Engineering": "fa-gears",
+        "Electronics & Communication": "fa-microchip",
+        "Electrical Engineering": "fa-bolt",
+        "Civil Engineering": "fa-building",
+        "Data Science & AI": "fa-chart-line",
+        "Robotics & Automation": "fa-robot",
+        "Mathematics": "fa-square-root-variable",
+        "Physics": "fa-atom",
+        "Biotechnology": "fa-dna"
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const requestedBranch = params.get('branch') || 'Computer Science & Engineering';
+    const branch = branchAliases[requestedBranch] || requestedBranch;
+    const subjects = branchSubjects[branch] || [];
+    document.querySelector('.brand-name').textContent = `PadhaiHub - ${branch}`;
+
+    const grid = document.getElementById('subjectsGrid');
+    const search = document.getElementById('subjectSearch');
+
+    function renderSubjects() {
+        const query = search.value.trim().toLocaleLowerCase();
+        const visibleSubjects = subjects.filter(subject => subject.toLocaleLowerCase().includes(query));
+        grid.replaceChildren();
+
+        if (visibleSubjects.length === 0) {
+            const emptyState = document.createElement('p');
+            emptyState.className = 'empty-state';
+            emptyState.textContent = subjects.length
+                ? 'No subjects match your search.'
+                : 'No subject catalog is available for this branch yet.';
+            grid.append(emptyState);
+            return;
+        }
+
+        for (const subject of visibleSubjects) {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'option-card';
+            card.addEventListener('click', () => selectSubject(subject));
+
+            const iconBadge = document.createElement('span');
+            iconBadge.className = 'card-icon-badge';
+            const icon = document.createElement('i');
+            icon.className = `fa-solid ${iconByBranch[branch] || 'fa-book-open'}`;
+            iconBadge.append(icon);
+
+            const info = document.createElement('span');
+            info.className = 'card-info';
+            const title = document.createElement('span');
+            title.className = 'card-title';
+            title.textContent = subject;
+            const description = document.createElement('span');
+            description.className = 'card-desc';
+            description.textContent = `Study resources and lectures for ${subject}`;
+            info.append(title, description);
+
+            const arrow = document.createElement('i');
+            arrow.className = 'fa-solid fa-chevron-right arrow-icon';
+            card.append(iconBadge, info, arrow);
+            grid.append(card);
+        }
+    }
+
+    function selectSubject(subjectName) {
+        window.location.href = `categories.html?branch=${encodeURIComponent(branch)}&subject=${encodeURIComponent(subjectName)}`;
+    }
+
+    search.addEventListener('input', renderSubjects);
+    renderSubjects();
 </script>  </div>
 
 </body>

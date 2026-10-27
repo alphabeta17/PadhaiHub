@@ -30,8 +30,9 @@
         .category-pill { background: #1b3b2b; color: #ffffff; padding: 8px 18px; border-radius: 30px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
         /* Main Grid Layout */
-        .content-grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
-        @media (max-width: 1024px) { .content-grid { grid-template-columns: 1fr; } }
+        .content-grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; }
+        .content-grid > * { min-width: 0; }
+        @media (max-width: 1024px) { .content-grid { grid-template-columns: minmax(0, 1fr); } }
 
         /* Left Section: Player & Rank Info */
         .main-video-section { display: flex; flex-direction: column; gap: 20px; }
@@ -52,7 +53,7 @@
         .info-list { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
         .info-item { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; }
         .info-label { font-weight: 700; color: #2d4a3e; min-width: 120px; }
-        .info-value { color: #4a5d53; font-weight: 500; flex: 1; }
+        .info-value { color: #4a5d53; font-weight: 500; flex: 1; min-width: 0; overflow-wrap: anywhere; }
         .channel-link { color: #e76f51; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s ease; }
         .channel-link:hover { color: #d64a27; text-decoration: underline; }
 
@@ -61,8 +62,16 @@
         .sidebar-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
         .sidebar-title span { font-size: 12px; color: #6a7b72; font-weight: 500; }
         .rankings-list { display: flex; flex-direction: column; gap: 16px; max-height: 550px; overflow-y: auto; padding-right: 4px; }
+        .category-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; scrollbar-width: thin; }
+        .category-tab { flex: 0 0 auto; border: 0; border-radius: 18px; padding: 9px 13px; background: #eef2eb; color: #1b3b2b; box-shadow: 3px 3px 7px #cfd6cc, -3px -3px 7px #fff; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .category-tab.active { background: #1b3b2b; color: #fff; }
+        .player-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .player-action { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 10px 16px; border: 0; border-radius: 18px; background: #1b3b2b; color: #fff; font: inherit; font-size: 13px; font-weight: 700; text-decoration: none; cursor: pointer; }
+        .player-action[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+        .player-message { display: none; padding: 20px; border-radius: 18px; background: #fff3e8; color: #713e1d; font-weight: 600; line-height: 1.5; }
+        .player-message button { margin-top: 12px; }
         
-        .rank-item { display: flex; gap: 12px; background: #eef2eb; padding: 10px; border-radius: 20px; box-shadow: inset 3px 3px 6px #cfd6cc, inset -3px -3px 6px #ffffff; cursor: pointer; transition: all 0.2s ease; align-items: center; }
+        .rank-item { display: flex; width: 100%; gap: 12px; background: #eef2eb; padding: 10px; border: 0; border-radius: 20px; box-shadow: inset 3px 3px 6px #cfd6cc, inset -3px -3px 6px #ffffff; cursor: pointer; transition: all 0.2s ease; align-items: center; text-align: left; font: inherit; }
         .rank-item:hover { transform: translateX(4px); box-shadow: 6px 6px 12px #cfd6cc, -6px -6px 12px #ffffff; }
         .rank-number-badge { width: 32px; height: 32px; border-radius: 50%; background: #eef2eb; box-shadow: 3px 3px 6px #cfd6cc, -3px -3px 6px #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #1b3b2b; flex-shrink: 0; }
         .thumb-box { width: 90px; height: 56px; border-radius: 12px; overflow: hidden; flex-shrink: 0; position: relative; }
@@ -76,6 +85,24 @@
         #loadingOverlay { position: fixed; inset: 0; background: rgba(238, 242, 235, 0.9); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; font-weight: 700; color: #1b3b2b; }
         .spinner { width: 50px; height: 50px; border: 5px solid #cfd6cc; border-top: 5px solid #1b3b2b; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @media (max-width: 640px) {
+            body { padding: 12px; }
+            .app-container { gap: 14px; }
+            .navbar { align-items: flex-start; flex-direction: column; gap: 12px; padding: 14px; border-radius: 20px; }
+            .nav-left { width: 100%; gap: 10px; }
+            .brand-name { font-size: 17px; }
+            .category-pill { max-width: 100%; white-space: normal; font-size: 12px; }
+            .content-grid { gap: 14px; }
+            .player-card, .sidebar-card { padding: 12px; border-radius: 22px; }
+            .video-details-card { padding: 18px; border-radius: 22px; }
+            .details-header { align-items: flex-start; }
+            .info-item { flex-direction: column; gap: 2px; font-size: 14px; }
+            .info-label { min-width: 0; }
+            .sidebar-title { gap: 8px; font-size: 16px; }
+            .rankings-list { max-height: 420px; }
+            .rank-item { min-height: 72px; }
+            .thumb-box { width: 82px; height: 52px; }
+        }
     </style>
 </head>
 <body>
@@ -112,8 +139,15 @@
                 <!-- Player Container -->
                 <div class="player-card">
                     <div class="iframe-wrapper">
-                        <iframe id="mainYoutubePlayer" src="" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe id="mainYoutubePlayer" src="" title="YouTube video player" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
+                </div>
+                <div class="player-message" id="playerMessage" role="status">
+                    <span id="playerMessageText"></span>
+                    <button class="player-action" id="retrySearchBtn" type="button" onclick="loadRecommendations()">Try again</button>
+                </div>
+                <div class="player-actions">
+                    <a class="player-action" id="openOnYoutube" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">Open on YouTube</a>
                 </div>
 
                 <!-- Details Card (Rank 1 & Criteria Box) -->
@@ -129,6 +163,7 @@
                             <span class="criteria-label">Sort By:</span>
                             <select id="criteriaSelect" class="criteria-select" onchange="changeCriteria(this.value)">
                                 <option value="viewCount" selected>Views (Most Popular)</option>
+                                <option value="likeCount">Likes</option>
                                 <option value="commentCount">Comments (High Engagement)</option>
                             </select>
                         </div>
@@ -159,6 +194,7 @@
                     AI Curated List
                     <span id="sortedByText">Sorted by Views</span>
                 </div>
+                <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="Recommendation groups"></div>
                 <div class="rankings-list" id="rankingsSidebarList">
                     <!-- Dynamically populated rank list items -->
                 </div>
@@ -168,103 +204,166 @@
 
     <!-- Optimized Client-Side Script -->
     <script>
+        const GROUPS = ['Top Curated Picks', 'Evergreen Detailed', 'High Engagement'];
+        const params = new URLSearchParams(window.location.search);
+        const subject = params.get('subject') || 'Data Structures & Algorithms';
+        const branch = params.get('branch') || '';
+        const category = params.get('category') || 'oneshot';
         let rawVideos = [];
         let aiCategorizedData = {};
         let activeVideoList = [];
         let currentCriteria = 'viewCount';
+        let currentGroup = 'Top Curated Picks';
 
-        window.onload = async function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const subject = urlParams.get('subject') || 'Data Structures & Algorithms';
-    const category = urlParams.get('category') || 'oneshot';
+        document.querySelector('.back-btn').href =
+            `categories.html?branch=${encodeURIComponent(branch)}&subject=${encodeURIComponent(subject)}`;
 
-    document.getElementById('currentCategoryPill').innerHTML = `<i class="fa-solid fa-bolt"></i> ${subject} (${category.toUpperCase()})`;
+        async function loadRecommendations() {
+            const overlay = document.getElementById('loadingOverlay');
+            const message = document.getElementById('playerMessage');
+            overlay.style.display = 'flex';
+            message.style.display = 'none';
+            document.getElementById('loadingText').textContent = `Finding ${category} lectures for ${subject}...`;
 
-    try {
-        // Updated fetch URL including both subject and category parameters to match backend server.js
-        const response = await fetch(`${API_BASE_URL}/api/categorize/${encodeURIComponent(subject)}/${encodeURIComponent(category)}`);
-        const result = await response.json();
+            try {
+                const url = new URL(`${API_BASE_URL}/api/categorize/${encodeURIComponent(subject)}/${encodeURIComponent(category)}`, window.location.href);
+                if (branch) url.searchParams.set('branch', branch);
+                const response = await fetch(url);
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || 'Could not load study videos.');
+                }
 
-        if (result.success) {
-            rawVideos = result.rawVideoData;
-            aiCategorizedData = result.aiCategorization;
+                rawVideos = Array.isArray(result.rawVideoData) ? result.rawVideoData : [];
+                aiCategorizedData = result.aiCategorization || {};
+                if (!rawVideos.length) throw new Error('No matching educational videos were found.');
 
-            const categoryKeys = Object.keys(aiCategorizedData);
-            if (categoryKeys.length > 0) {
-                activeVideoList = aiCategorizedData[categoryKeys[0]] || rawVideos;
-            } else {
-                activeVideoList = rawVideos;
+                renderCategoryTabs();
+                selectGroup(GROUPS.find(group => aiCategorizedData[group]?.length) || 'All Results', false);
+            } catch (error) {
+                console.error('Recommendation loading failed:', error);
+                document.getElementById('playerMessageText').textContent = error.message || 'Could not reach the recommendation service.';
+                message.style.display = 'block';
+            } finally {
+                overlay.style.display = 'none';
+            }
+        }
+
+        function renderCategoryTabs() {
+            const tabs = document.getElementById('categoryTabs');
+            tabs.replaceChildren();
+            for (const group of ['Top Curated Picks', 'Evergreen Detailed', 'High Engagement', 'All Results']) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'category-tab';
+                button.setAttribute('role', 'tab');
+                button.textContent = group;
+                button.addEventListener('click', () => selectGroup(group, true));
+                tabs.append(button);
+            }
+        }
+
+        function selectGroup(group, userInitiated = true) {
+            currentGroup = group;
+            activeVideoList = group === 'All Results'
+                ? [...rawVideos]
+                : [...(aiCategorizedData[group] || [])];
+            if (!activeVideoList.length && group !== 'All Results') {
+                activeVideoList = [...rawVideos];
+                currentGroup = 'All Results';
             }
 
-            sortAndRenderVideos();
-        } else {
-            alert("AI Pipeline failed to load recommendations.");
+            for (const tab of document.querySelectorAll('.category-tab')) {
+                const active = tab.textContent === currentGroup;
+                tab.classList.toggle('active', active);
+                tab.setAttribute('aria-selected', String(active));
+            }
+            sortAndRenderVideos(userInitiated);
         }
-    } catch (err) {
-        console.error("Connection Error:", err);
-        alert("Network error: Could not reach the backend server.");
-    } finally {
-        document.getElementById('loadingOverlay').style.display = 'none';
-    }
-};
 
         function changeCriteria(newCriteria) {
             currentCriteria = newCriteria;
-            document.getElementById('sortedByTest').innerText = `Sorted by ${newCriteria === 'viewCount' ? 'Views' : 'Comments'}`;
-            sortAndRenderVideos();
+            const labels = { viewCount: 'Views', likeCount: 'Likes', commentCount: 'Comments' };
+            document.getElementById('sortedByText').textContent = `Sorted by ${labels[newCriteria] || 'Views'}`;
+            sortAndRenderVideos(true);
         }
 
-        function sortAndRenderVideos() {
-            if (!activeVideoList || activeVideoList.length === 0) return;
+        function sortAndRenderVideos(autoplayFirst = false) {
+            const sidebar = document.getElementById('rankingsSidebarList');
+            sidebar.replaceChildren();
+            activeVideoList = [...activeVideoList].sort((a, b) =>
+                (Number(b[currentCriteria]) || 0) - (Number(a[currentCriteria]) || 0)
+            );
 
-            // Sort list based on selected criteria
-            activeVideoList.sort((a, b) => (b[currentCriteria] || 0) - (a[currentCriteria] || 0));
-
-            // Set Rank 1 in Main Player
-            playVideoObj(0);
-
-            // Render Sidebar Ranks
-            const sidebarContainer = document.getElementById('rankingsSidebarList');
-            sidebarContainer.innerHTML = '';
-
-            activeVideoList.forEach((vid, index) => {
-                if (index === 0) return; // Skip Rank 1
-
-                const statText = currentCriteria === 'viewCount' 
-                    ? `${(vid.viewCount ? (vid.viewCount / 1000).toFixed(0) : 0)}K Views` 
-                    : `${vid.commentCount || 0} Comments`;
-
-                const rankItemHTML = `
-                    <div class="rank-item" onclick="playVideoObj(${index})">
-                        <div class="rank-number-badge">#${index + 1}</div>
-                        <div class="thumb-box"><img src="${vid.thumbnail || 'https://img.youtube.com/vi/' + vid.id + '/hqdefault.jpg'}" alt="thumb"></div>
-                        <div class="rank-info">
-                            <div class="rank-title">${vid.title}</div>
-                            <div class="rank-channel">${vid.channel}</div>
-                            <div class="rank-stats">${statText}</div>
-                        </div>
-                    </div>
-                `;
-                sidebarContainer.insertAdjacentHTML('beforeend', rankItemHTML);
-            });
-        }
-
-        function playVideoObj(index) {
-            const vid = activeVideoList[index];
-            if (!vid) return;
-
-            let vId = vid.id;
-            if (!vId && vid.url) {
-                const match = vid.url.match(/(?:v=|\/)([0-9A-Za-z_-]{11}).*/);
-                vId = match ? match[1] : 'vLqTf2b6GZw';
+            if (!activeVideoList.length) {
+                document.getElementById('playerMessageText').textContent = 'No videos are available in this recommendation group.';
+                document.getElementById('playerMessage').style.display = 'block';
+                return;
             }
 
-            document.getElementById('mainYoutubePlayer').src = `https://www.youtube.com/embed/${vId}?autoplay=1&enablejsapi=1`;
-            document.getElementById('rankBadgeText').innerText = `AI Recommended Rank #${index + 1}`;
-            document.getElementById('dispTopicName').innerText = vid.title;
-            document.getElementById('dispChannelName').innerText = vid.channel;
-            document.getElementById('dispChannelLink').href = vid.channelUrl || '#';
+            document.getElementById('playerMessage').style.display = 'none';
+            activeVideoList.forEach((video, index) => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'rank-item';
+                item.setAttribute('aria-label', `Play number ${index + 1}: ${video.title}`);
+                item.addEventListener('click', () => playVideoObj(index, true));
+
+                const rank = document.createElement('span');
+                rank.className = 'rank-number-badge';
+                rank.textContent = `#${index + 1}`;
+                const thumbBox = document.createElement('span');
+                thumbBox.className = 'thumb-box';
+                const image = document.createElement('img');
+                image.src = video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+                image.alt = '';
+                image.loading = 'lazy';
+                thumbBox.append(image);
+
+                const info = document.createElement('span');
+                info.className = 'rank-info';
+                const title = document.createElement('span');
+                title.className = 'rank-title';
+                title.textContent = video.title;
+                const channel = document.createElement('span');
+                channel.className = 'rank-channel';
+                channel.textContent = video.channel;
+                const stats = document.createElement('span');
+                stats.className = 'rank-stats';
+                const value = Number(video[currentCriteria]) || 0;
+                stats.textContent = currentCriteria === 'viewCount'
+                    ? `${new Intl.NumberFormat().format(value)} views`
+                    : `${new Intl.NumberFormat().format(value)} ${currentCriteria === 'likeCount' ? 'likes' : 'comments'}`;
+                info.append(title, channel, stats);
+                item.append(rank, thumbBox, info);
+                sidebar.append(item);
+            });
+
+            playVideoObj(0, autoplayFirst);
         }
+
+        function playVideoObj(index, userInitiated = false) {
+            const video = activeVideoList[index];
+            if (!video?.id) return;
+
+            document.getElementById('mainYoutubePlayer').src =
+                `https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.id)}?autoplay=${userInitiated ? '1' : '0'}&rel=0`;
+            document.getElementById('rankBadgeText').textContent = `${currentGroup} #${index + 1}`;
+            document.getElementById('dispTopicName').textContent = video.title;
+            document.getElementById('dispChannelName').textContent = video.channel;
+
+            const channelLink = document.getElementById('dispChannelLink');
+            channelLink.href = video.channelUrl || `https://www.youtube.com/channel/`;
+            channelLink.rel = 'noopener noreferrer';
+            document.getElementById('openOnYoutube').href = video.url || `https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}`;
+            document.getElementById('openOnYoutube').setAttribute('aria-disabled', 'false');
+
+            if (userInitiated && window.matchMedia('(max-width: 1024px)').matches) {
+                document.querySelector('.player-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        loadRecommendations();
     </script>
 </body>
 </html>

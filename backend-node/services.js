@@ -1,89 +1,200 @@
 import './config/env.js';
 
-// 1. Fetch YouTube Videos with Tightened Search Query
-export async function fetchYoutubeVideos(searchQuery, category = 'oneshot') {
-    const apiKey = process.env.YOUTUBE_API_KEY;
-    
-    // Query refinement based on category to get accurate academic results
-    let modifier = "engineering lecture tutorial";
-    if (category === 'oneshot') modifier = "one shot full revision lecture";
-    else if (category === 'fulldetail') modifier = "complete course detailed explanation unit wise";
-    else if (category === 'playlist') modifier = "full playlist complete syllabus";
+const CATEGORY_SEARCH_TERMS = {
+    oneshot: 'one shot revision lecture',
+    fulldetail: 'complete course detailed lecture',
+    playlist: 'complete lecture playlist'
+};
 
-    const preciseQuery = `${searchQuery} ${modifier}`;
-    
-    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&q=${encodeURIComponent(preciseQuery)}&type=video&key=${apiKey}`;
-    const searchRes = await fetch(searchUrl);
-    const searchData = await searchRes.json();
-    
-    if (!searchData.items || searchData.items.length === 0) {
-        throw new Error("No precise videos found on YouTube for this topic.");
-    }
-
-    const videoIds = searchData.items.map(item => item.id.videoId).filter(Boolean).join(',');
-
-    const statsUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoIds}&key=${apiKey}`;
-    const statsRes = await fetch(statsUrl);
-    const statsData = await statsRes.json();
-
-    return statsData.items.map(item => ({
-        id: item.id,
-        title: item.snippet.title,
-        channel: item.snippet.channelTitle,
-        channelUrl: `https://www.youtube.com/@${item.snippet.channelTitle.replace(/\s+/g, '')}`,
-        thumbnail: item.snippet.thumbnails.high ? item.snippet.thumbnails.high.url : '',
-        publishedAt: item.snippet.publishedAt,
-        viewCount: parseInt(item.statistics.viewCount || 0),
-        commentCount: parseInt(item.statistics.commentCount || 0),
-        likeCount: parseInt(item.statistics.likeCount || 0),
-        url: `https://www.youtube.com/watch?v=${item.id}`
-    }));
+function tokenize(value) {
+    return value
+        .toLocaleLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, ' ')
+        .split(/\s+/)
+        .filter(token => token.length > 2);
 }
 
-// 2. Strict Prompt Tightening for Groq Llama 3.1
-export async function categorizeVideosWithLlama(videosArray, subject, category) {
-    const systemPrompt = `You are an elite AI curriculum curator for engineering students. 
-    You will receive a JSON array of YouTube videos for the subject "${subject}" under the selected category type: "${category}".
-    
-    CRITICAL INSTRUCTIONS:
-    1. Filter out completely irrelevant, clickbait, or entertainment videos that do not match academic learning for "${subject}".
-    2. Rank and categorize the remaining videos into three strict groups based on quality and relevance: 'Top Curated Picks', 'Evergreen Detailed', and 'High Engagement'.
-    3. Output the result strictly in valid JSON format matching these exact keys: {"Top Curated Picks": [...], "Evergreen Detailed": [...], "High Engagement": [...]}.`;
+function scoreVideo(video, subject, branch) {
+    const subjectTokens = [...new Set(tokenize(`${subject} ${branch || ''}`))];
+    const titleTokens = new Set(tokenize(video.title));
+    const descriptionTokens = new Set(tokenize(video.description || ''));
+    const matchedTitleTerms = subjectTokens.filter(token => titleTokens.has(token)).length;
+    const matchedDescriptionTerms = subjectTokens.filter(token => descriptionTokens.has(token)).length;
+    const relevanceScore = subjectTokens.length
+        ? (matchedTitleTerms * 3 + matchedDescriptionTerms) / (subjectTokens.length * 4)
+        : 0;
+    const engagementRate = video.viewCount
+        ? (video.likeCount + video.commentCount) / video.viewCount
+        : 0;
 
-    const url = `${process.env.GROQ_BASE_URL}/chat/completions`;
-    
+    return { ...video, relevanceScore, engagementRate };
+}
+
+function getFallbackCategories(videos) {
+    const byRelevance = [...videos].sort((a, b) =>
+        b.relevanceScore - a.relevanceScore || b.viewCount - a.viewCount
+    );
+    const byDepth = [...videos].sort((a, b) =>
+        new Date(a.publishedAt) - new Date(b.publishedAt) || b.viewCount - a.viewCount
+    );
+    const byEngagement = [...videos].sort((a, b) =>
+        b.engagementRate - a.engagementRate || b.commentCount - a.commentCount
+    );
+
+    return {
+        'Top Curated Picks': byRelevance.slice(0, 6),
+        'Evergreen Detailed': byDepth.slice(0, 6),
+        'High Engagement': byEngagement.slice(0, 6)
+    };
+}
+
+export async function fetchYoutubeVideos(searchQuery, category = 'oneshot', branch = '') {
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) {
+        throw new Error('YouTube search is not configured. Set YOUTUBE_API_KEY on the backend.');
+    }
+
+    const queryTerms = [
+        `"${searchQuery}"`,
+        branch,
+        CATEGORY_SEARCH_TERMS[category] || CATEGORY_SEARCH_TERMS.oneshot,
+        'lecture tutorial'
+    ].filter(Boolean);
+    const searchUrl = new URL('https://www.googleapis.com/youtube/v3/search');
+    searchUrl.search = new URLSearchParams({
+        part: 'snippet',
+        type: 'video',
+        videoCategoryId: '27',
+        maxResults: '25',
+        order: 'relevance',
+        relevanceLanguage: 'en',
+        safeSearch: 'strict',
+        q: queryTerms.join(' '),
+        key: apiKey
+    }).toString();
+
+    const searchResponse = await fetch(searchUrl);
+    const searchData = await searchResponse.json();
+    if (!searchResponse.ok) {
+        throw new Error(searchData.error?.message || 'YouTube search failed.');
+    }
+
+    const searchItems = (searchData.items || []).filter(item => item.id?.videoId);
+    if (searchItems.length === 0) {
+        throw new Error(`No educational videos found for "${searchQuery}". Try a shorter subject name.`);
+    }
+
+    const videoIds = searchItems.map(item => item.id.videoId).join(',');
+    const statsUrl = new URL('https://www.googleapis.com/youtube/v3/videos');
+    statsUrl.search = new URLSearchParams({
+        part: 'snippet,statistics',
+        id: videoIds,
+        key: apiKey
+    }).toString();
+
+    const statsResponse = await fetch(statsUrl);
+    const statsData = await statsResponse.json();
+    if (!statsResponse.ok) {
+        throw new Error(statsData.error?.message || 'Could not load YouTube video details.');
+    }
+
+    const videosById = new Map((statsData.items || []).map(item => [item.id, item]));
+    return searchItems
+        .map(searchItem => {
+            const item = videosById.get(searchItem.id.videoId);
+            if (!item) return null;
+
+            return {
+                id: item.id,
+                title: item.snippet.title,
+                description: item.snippet.description,
+                channel: item.snippet.channelTitle,
+                channelUrl: `https://www.youtube.com/channel/${item.snippet.channelId}`,
+                thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.medium?.url || '',
+                publishedAt: item.snippet.publishedAt,
+                viewCount: Number(item.statistics.viewCount || 0),
+                commentCount: Number(item.statistics.commentCount || 0),
+                likeCount: Number(item.statistics.likeCount || 0),
+                url: `https://www.youtube.com/watch?v=${item.id}`
+            };
+        })
+        .filter(Boolean);
+}
+
+export async function categorizeVideosWithLlama(videosArray, subject, category, branch = '') {
+    const scoredVideos = videosArray.map(video => scoreVideo(video, subject, branch));
+    const fallbackCategories = getFallbackCategories(scoredVideos);
+    const apiKey = process.env.GROQ_API_KEY;
+    const baseUrl = process.env.GROQ_BASE_URL;
+    if (!apiKey || !baseUrl) {
+        console.warn('Groq AI is not configured; returning relevance-ranked YouTube results.');
+        return fallbackCategories;
+    }
+
+    const candidates = scoredVideos.map(({ id, title, description, channel, publishedAt, viewCount, likeCount, commentCount, relevanceScore }) => ({
+        id,
+        title,
+        description: description.slice(0, 500),
+        channel,
+        publishedAt,
+        viewCount,
+        likeCount,
+        commentCount,
+        relevanceScore
+    }));
+    const systemPrompt = `You are a strict academic video relevance ranker. The requested subject is "${subject}"${branch ? ` in the "${branch}" branch` : ''}; study format is "${category}".
+Only recommend candidates that directly teach this subject at college or engineering level. Exclude unrelated topics, entertainment, motivational content, and videos that only mention a matching keyword. Do not invent IDs or videos.
+Return JSON only with these exact keys: "Top Curated Picks", "Evergreen Detailed", "High Engagement". Each value must be an array of candidate ID strings copied from the supplied data. Top picks should be the most relevant and instructional; evergreen should favor comprehensive lectures and playlists; engagement should favor useful, well-engaged instruction. A candidate may appear in only one group.`;
+
     try {
-        const response = await fetch(url, {
+        const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/chat/completions`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+                Authorization: `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: 'llama3-8b-8192', 
+                model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
                 messages: [
-                    { role: 'system', content: systemPrompt }, 
-                    { role: 'user', content: JSON.stringify(videosArray) }
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: JSON.stringify(candidates) }
                 ],
-                temperature: 0.1, // Lower temperature for high precision and zero hallucination
-                response_format: { type: "json_object" } 
+                temperature: 0,
+                response_format: { type: 'json_object' }
             })
         });
-
         const data = await response.json();
-
-        if (!response.ok || !data.choices || !data.choices[0]) {
-            throw new Error(data.error?.message || "Failed to get response from Groq Llama API.");
+        if (!response.ok || !data.choices?.[0]?.message?.content) {
+            throw new Error(data.error?.message || 'AI ranking returned no results.');
         }
 
-        return JSON.parse(data.choices[0].message.content);
+        const result = JSON.parse(data.choices[0].message.content);
+        const candidateById = new Map(scoredVideos.map(video => [video.id, video]));
+        const usedIds = new Set();
+        const validated = {};
 
+        for (const key of ['Top Curated Picks', 'Evergreen Detailed', 'High Engagement']) {
+            const ids = result[key];
+            if (!Array.isArray(ids)) {
+                throw new Error(`AI ranking response is missing "${key}".`);
+            }
+
+            validated[key] = ids
+                .filter(id => typeof id === 'string' && candidateById.has(id) && !usedIds.has(id))
+                .slice(0, 8)
+                .map(id => {
+                    usedIds.add(id);
+                    return candidateById.get(id);
+                });
+        }
+
+        if (Object.values(validated).every(group => group.length === 0)) {
+            throw new Error('AI ranking did not return any valid candidate IDs.');
+        }
+
+        return validated;
     } catch (error) {
-        console.warn("⚠️ Groq AI call failed, using smart fallback:", error.message);
-        return {
-            "Top Curated Picks": videosArray.slice(0, 4),
-            "Evergreen Detailed": videosArray.slice(4, 8),
-            "High Engagement": videosArray.slice(8, 12)
-        };
+        console.warn('AI ranking failed; using relevance-ranked results:', error.message);
+        return fallbackCategories;
     }
 }

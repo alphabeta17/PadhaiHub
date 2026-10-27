@@ -174,8 +174,8 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    localStorage.setItem("userEmail", email);
-                    localStorage.setItem("userPassword", password); // Store temporarily to save in details page
+                    sessionStorage.setItem("signupEmail", email);
+                    sessionStorage.setItem("signupPassword", password);
                     window.location.href = 'details.html';
                 } else {
                     showInlineError('otpError', result.message || 'Invalid OTP code.');

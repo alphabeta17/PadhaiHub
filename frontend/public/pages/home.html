@@ -28,9 +28,10 @@
     <ul class="drawer-links">
       <li><a href="home.html">🏠 Home Dashboard</a></li>
       <li><a href="details.html">👤 Student Profile</a></li>
-      <li><a href="#">📚 Saved Notes</a></li>
-      <li><a href="#">⭐ My Favorites</a></li>
-      <li><a href="#">⚙️ Settings</a></li>
+      <li><a href="subjects.html">📚 Browse Subjects</a></li>
+      <li><a href="books.html">📖 Reference Books</a></li>
+      <li><a href="pyqs.html">📝 Previous Year Papers</a></li>
+      <li><a href="roadmap.html">🗺️ Study Roadmaps</a></li>
       <li><a href="index.html" class="logout-link">🚪 Logout</a></li>
     </ul>
   </nav>
@@ -49,6 +50,14 @@
         <div class="modal-chip" onclick="selectBranch('Environmental Studies')">🌱 Environmental</div>
         <div class="modal-chip" onclick="selectBranch('Architecture & Design')">🏛️ Architecture</div>
         <div class="modal-chip" onclick="selectBranch('Cyber Security')">🛡️ Cyber Security</div>
+        <div class="modal-chip" onclick="selectBranch('Aerospace Engineering')">🛰️ Aerospace</div>
+        <div class="modal-chip" onclick="selectBranch('Information Technology')">🖥️ Information Technology</div>
+        <div class="modal-chip" onclick="selectBranch('Biomedical Engineering')">🩺 Biomedical</div>
+        <div class="modal-chip" onclick="selectBranch('Agricultural Engineering')">🌾 Agricultural</div>
+        <div class="modal-chip" onclick="selectBranch('Industrial Engineering')">🏭 Industrial</div>
+        <div class="modal-chip" onclick="selectBranch('Automobile Engineering')">🚗 Automobile</div>
+        <div class="modal-chip" onclick="selectBranch('Mechatronics Engineering')">⚙️ Mechatronics</div>
+        <div class="modal-chip" onclick="selectBranch('Mining Engineering')">⛏️ Mining</div>
       </div>
     </div>
   </div>
@@ -70,7 +79,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="search-icon">
           <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clip-rule="evenodd" />
         </svg>
-        <input type="text" id="branchSearch" placeholder="Search Branch / Subject" onkeyup="filterBranches()" autocomplete="off">
+        <input type="search" id="branchSearch" placeholder="Search engineering branch" oninput="filterBranches()" autocomplete="off" aria-label="Search engineering branches">
       </div>
 
       <!-- Logout Button -->
@@ -167,27 +176,56 @@
     }
 
     function filterBranches() {
-        let input = document.getElementById('branchSearch').value.toLowerCase();
-        let cards = document.getElementsByClassName('branch-card');
-        for (let i = 0; i < cards.length; i++) {
-            let title = cards[i].getElementsByClassName('card-title')[0].innerText.toLowerCase();
-            if (title.includes(input)) {
-                cards[i].style.display = "flex";
-            } else {
-                cards[i].style.display = "none";
-            }
+        const query = document.getElementById('branchSearch').value.trim().toLocaleLowerCase();
+        const cards = [...document.querySelectorAll('#branchGrid .branch-card')];
+        const modalChips = [...document.querySelectorAll('.modal-chip')];
+        let visibleMainCards = 0;
+        let visibleOtherBranches = 0;
+
+        for (const card of cards) {
+            const matches = card.textContent.toLocaleLowerCase().includes(query);
+            card.style.display = matches ? 'flex' : 'none';
+            if (matches && !card.classList.contains('others-card')) visibleMainCards++;
+        }
+
+        for (const chip of modalChips) {
+            const matches = chip.textContent.toLocaleLowerCase().includes(query);
+            chip.style.display = matches ? '' : 'none';
+            if (matches) visibleOtherBranches++;
+        }
+
+        if (query && visibleMainCards === 0 && visibleOtherBranches > 0) {
+            openOthersModal();
+        } else if (!query) {
+            closeOthersModal();
         }
     }
 
     function selectBranch(branchName) {
     closeOthersModal();
-    // Pass branch name to subjects page
     window.location.href = `subjects.html?branch=${encodeURIComponent(branchName)}`;
 }
 
+    document.addEventListener('keydown', event => {
+        const target = event.target.closest('.branch-card, .modal-chip');
+        if (target && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            target.click();
+        }
+    });
+
+    document.querySelectorAll('.branch-card, .modal-chip').forEach(card => {
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+    });
+
     function handleLogout() {
         if(confirm("Are you sure you want to log out of PadhaiHub?")) {
-            localStorage.removeItem("userEmail"); // Clear session
+            clearUserProfileCache();
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("userIdentifier");
+            sessionStorage.removeItem("signupEmail");
+            sessionStorage.removeItem("signupPassword");
             window.location.href = "index.html";  // Go back to login
         }
     }

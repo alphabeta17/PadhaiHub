@@ -439,10 +439,14 @@
 
         if (response.ok && result.success) {
             msgBox.textContent = `✅ Login Successful! Redirecting...`;
-            
-            // Save user session in localStorage if needed
+
             localStorage.setItem('userRole', currentRole);
             localStorage.setItem('userIdentifier', identifier);
+            if (result.user && result.token) {
+                cacheUserProfile(result.user, result.token);
+            } else {
+                clearUserProfileCache();
+            }
 
             setTimeout(() => {
                 window.location.href = 'home.html';

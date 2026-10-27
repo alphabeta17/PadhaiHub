@@ -218,6 +218,36 @@
       box-shadow: none;
     }
 
+    .quiz-option {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 2px solid transparent;
+      border-radius: 18px;
+      background: #eef2eb;
+      box-shadow: inset 4px 4px 8px #cfd6cc, inset -4px -4px 8px #ffffff;
+      color: #3b5345;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .quiz-option:hover:not(:disabled), .quiz-option:focus-visible {
+      border-color: #1b3b2b;
+    }
+
+    .quiz-option.correct {
+      border-color: #228b54;
+      background: #e4f3e8;
+    }
+
+    .quiz-option.incorrect {
+      border-color: #c94d3f;
+      background: #f9e7e4;
+    }
+
     .quiz-footer {
       display: flex;
       justify-content: space-between;
@@ -359,19 +389,37 @@
 
     .rank-item {
       display: flex;
+      width: 100%;
       gap: 12px;
       background: #eef2eb;
       padding: 12px;
+      border: 0;
       border-radius: 20px;
       box-shadow: inset 3px 3px 6px #cfd6cc, inset -3px -3px 6px #ffffff;
       cursor: pointer;
       transition: all 0.2s ease;
       align-items: center;
+      text-align: left;
+      font: inherit;
     }
 
     .rank-item:hover {
       transform: translateX(4px);
       box-shadow: 6px 6px 12px #cfd6cc, -6px -6px 12px #ffffff;
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 12px; }
+      .navbar { align-items: flex-start; flex-direction: column; gap: 12px; padding: 14px; border-radius: 20px; }
+      .brand-name { font-size: 17px; }
+      .category-pill { max-width: 100%; white-space: normal; }
+      .quiz-card, .details-card, .sidebar-card { padding: 16px; border-radius: 22px; }
+      .quiz-header, .quiz-footer { align-items: flex-start; flex-direction: column; gap: 10px; }
+      .quiz-title-main { font-size: 17px; }
+      .next-btn { width: 100%; min-height: 44px; }
+      .info-item { flex-direction: column; gap: 2px; }
+      .info-label { min-width: 0; }
+      .sidebar-title { gap: 8px; font-size: 16px; }
     }
 
     .rank-number-badge {
@@ -509,4 +557,160 @@
           <span id="sortedByText">Sorted by Rating</span>
         </div>
 
-        <div class="
+        <div class="rankings-list" id="rankingsSidebarList"></div>
+      </aside>
+    </div>
+  </div>
+  <script>
+    const quizSets = [
+      {
+        title: 'Data Structures & Algorithms - Core Test',
+        creator: 'PadhaiHub Learning Team',
+        rating: 4.9,
+        submissions: 18400,
+        questions: [
+          { text: 'Which data structure is best suited for implementing a FIFO queue?', options: ['Stack', 'Queue', 'Binary tree', 'Hash table'], answer: 1 },
+          { text: 'What is the average time complexity of binary search on a sorted array?', options: ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)'], answer: 1 },
+          { text: 'Which traversal of a binary search tree returns keys in sorted order?', options: ['Preorder', 'Postorder', 'Inorder', 'Level order'], answer: 2 },
+          { text: 'Which algorithm finds shortest paths from one source when edge weights are non-negative?', options: ['Kruskal', 'Dijkstra', 'Prim', 'DFS'], answer: 1 },
+          { text: 'What is the worst-case time complexity of merge sort?', options: ['O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'], answer: 2 }
+        ]
+      },
+      {
+        title: 'Operating Systems - Core Test',
+        creator: 'PadhaiHub Learning Team',
+        rating: 4.8,
+        submissions: 15200,
+        questions: [
+          { text: 'Which condition means a process is waiting for a resource held by another process?', options: ['Mutual exclusion', 'Hold and wait', 'No preemption', 'Circular wait'], answer: 1 },
+          { text: 'Which scheduling algorithm uses a fixed time slice?', options: ['FCFS', 'SJF', 'Round Robin', 'Priority only'], answer: 2 },
+          { text: 'What does a page fault indicate?', options: ['A page is not in main memory', 'The CPU is overheating', 'A process has ended', 'The disk is full'], answer: 0 },
+          { text: 'Which is a necessary condition for deadlock?', options: ['Preemption', 'Circular wait', 'Unlimited resources', 'Process termination'], answer: 1 },
+          { text: 'Which memory technique divides memory into fixed-size blocks?', options: ['Segmentation', 'Paging', 'Compaction', 'Overlaying'], answer: 1 }
+        ]
+      },
+      {
+        title: 'Database Management Systems - Core Test',
+        creator: 'PadhaiHub Learning Team',
+        rating: 4.7,
+        submissions: 12700,
+        questions: [
+          { text: 'Which key uniquely identifies each row in a relational table?', options: ['Foreign key', 'Primary key', 'Composite index', 'View'], answer: 1 },
+          { text: 'Which normal form removes partial dependency on a composite key?', options: ['1NF', '2NF', '3NF', 'BCNF'], answer: 1 },
+          { text: 'Which SQL clause filters grouped rows?', options: ['WHERE', 'ORDER BY', 'HAVING', 'LIMIT'], answer: 2 },
+          { text: 'What does ACID atomicity guarantee?', options: ['Transactions are all-or-nothing', 'Data is always encrypted', 'Queries run in parallel', 'Indexes stay sorted'], answer: 0 },
+          { text: 'Which join returns only rows with matching values in both tables?', options: ['LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'INNER JOIN'], answer: 3 }
+        ]
+      }
+    ];
+
+    let activeQuiz = quizSets[0];
+    let questionIndex = 0;
+    let score = 0;
+    let answered = false;
+    let sortedQuizzes = [];
+
+    const requestedSubject = new URLSearchParams(window.location.search).get('subject');
+    if (requestedSubject) {
+      const matchingQuiz = quizSets.find(quiz => quiz.title.toLocaleLowerCase().includes(requestedSubject.toLocaleLowerCase()));
+      if (matchingQuiz) activeQuiz = matchingQuiz;
+    }
+
+    function renderQuestion() {
+      const question = activeQuiz.questions[questionIndex];
+      document.getElementById('quizActiveTitle').textContent = activeQuiz.title;
+      document.getElementById('questionCounter').textContent = `Q ${questionIndex + 1} of ${activeQuiz.questions.length}`;
+      document.getElementById('questionText').textContent = question.text;
+      document.getElementById('scoreTracker').textContent = `Score: ${score}`;
+      document.getElementById('rankBadgeText').textContent = `Practice Test ${quizSets.indexOf(activeQuiz) + 1}`;
+      document.getElementById('dispCreator').textContent = activeQuiz.creator;
+      document.getElementById('dispTotalQ').textContent = `${activeQuiz.questions.length} Questions (MCQ)`;
+      document.getElementById('nextBtn').textContent = questionIndex === activeQuiz.questions.length - 1
+        ? 'Finish Test'
+        : 'Next Question';
+
+      const options = document.getElementById('optionsContainer');
+      options.replaceChildren();
+      question.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'quiz-option';
+        button.textContent = option;
+        button.addEventListener('click', () => selectAnswer(index, button));
+        options.append(button);
+      });
+      answered = false;
+    }
+
+    function selectAnswer(selectedIndex, selectedButton) {
+      if (answered) return;
+      answered = true;
+      const correctIndex = activeQuiz.questions[questionIndex].answer;
+      for (const [index, option] of [...document.querySelectorAll('.quiz-option')].entries()) {
+        option.disabled = true;
+        if (index === correctIndex) option.classList.add('correct');
+      }
+      if (selectedIndex === correctIndex) {
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+      document.getElementById('scoreTracker').textContent = `Score: ${score}`;
+    }
+
+    function nextQuestion() {
+      if (!answered) {
+        document.getElementById('scoreTracker').textContent = 'Choose an answer before continuing.';
+        return;
+      }
+      if (questionIndex === activeQuiz.questions.length - 1) {
+        document.getElementById('questionText').textContent = `Test complete. You scored ${score} out of ${activeQuiz.questions.length}.`;
+        document.getElementById('questionCounter').textContent = 'Completed';
+        document.getElementById('optionsContainer').replaceChildren();
+        document.getElementById('nextBtn').textContent = 'Restart Test';
+        document.getElementById('nextBtn').onclick = restartQuiz;
+        return;
+      }
+      questionIndex++;
+      renderQuestion();
+    }
+
+    function restartQuiz() {
+      questionIndex = 0;
+      score = 0;
+      document.getElementById('nextBtn').onclick = nextQuestion;
+      renderQuestion();
+    }
+
+    function selectQuiz(index) {
+      activeQuiz = sortedQuizzes[index];
+      restartQuiz();
+      document.querySelector('.quiz-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function changeCriteria(criteria) {
+      renderQuizList(criteria);
+    }
+
+    function renderQuizList(criteria = document.getElementById('criteriaSelect').value) {
+      const sidebar = document.getElementById('rankingsSidebarList');
+      sortedQuizzes = [...quizSets].sort((a, b) => b[criteria] - a[criteria]);
+      document.getElementById('sortedByText').textContent = `Sorted by ${criteria === 'rating' ? 'Rating' : 'Submissions'}`;
+      sidebar.replaceChildren();
+      sortedQuizzes.forEach((quiz, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'rank-item';
+        button.addEventListener('click', () => selectQuiz(index));
+        button.textContent = `${quiz.title} · ${criteria === 'rating' ? `${quiz.rating} rating` : `${quiz.submissions.toLocaleString()} attempts`}`;
+        sidebar.append(button);
+      });
+    }
+
+    document.querySelector('.back-btn').href =
+      `subjects.html?branch=${encodeURIComponent(new URLSearchParams(window.location.search).get('branch') || 'Computer Science & Engineering')}`;
+    renderQuizList();
+    renderQuestion();
+  </script>
+</body>
+</html>

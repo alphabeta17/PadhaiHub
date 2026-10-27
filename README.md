@@ -12,5 +12,6 @@ Deploy the Node.js backend as a Render Web Service from the repository root:
 - Build command: `npm install --prefix backend-node`
 - Start command: `npm --prefix backend-node start`
 - Add the database and service credentials as Render environment variables; do not rely on a local `.env` file.
+- Set a long, random `SESSION_SECRET` environment variable to sign profile-session tokens.
 
 The backend serves the frontend pages itself, so opening the backend service URL keeps page requests and `/api` requests on the same origin. If the frontend is deployed as a separate static site, set `window.PADHAIHUB_API_BASE_URL` in `frontend/public/pages/api-config.js` to the backend service URL (for example, `https://your-backend.onrender.com`).

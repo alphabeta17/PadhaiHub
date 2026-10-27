@@ -6,6 +6,7 @@ import './config/env.js';
 import authRoutes from './routes/auth.routes.js'; 
 import { fetchYoutubeVideos, categorizeVideosWithLlama } from './services.js';  
 import { pool, initDatabase } from './config/db.js';
+import { createSessionToken } from './config/session.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,12 +24,13 @@ app.use(cors());
 // AI Categorization Route
 app.get('/api/categorize/:topic/:category', async (req, res) => {
     try {
-        const topic = decodeURIComponent(req.params.topic);
+        const topic = req.params.topic;
         const category = req.params.category || 'oneshot';
-        console.log(`🔍 Fetching precise videos for: ${topic} [Category: ${category}]...`);
+        const branch = req.query.branch || '';
+        console.log(`🔍 Fetching precise videos for: ${topic} [${branch || 'General'} / ${category}]...`);
         
-        const videoTable = await fetchYoutubeVideos(topic, category);
-        const categorizedResult = await categorizeVideosWithLlama(videoTable, topic, category);
+        const videoTable = await fetchYoutubeVideos(topic, category, branch);
+        const categorizedResult = await categorizeVideosWithLlama(videoTable, topic, category, branch);
         
         res.json({
             success: true,
@@ -59,14 +61,15 @@ app.get('/', (req, res) => {
 app.get('/api/categorize/:topic', async (req, res) => {
     try {
         const topic = req.params.topic;
+        const branch = req.query.branch || '';
         console.log(`🔍 Fetching videos for topic: ${topic}...`);
         
         // 1. Get videos with stats from YouTube API
-        const videoTable = await fetchYoutubeVideos(topic);
+        const videoTable = await fetchYoutubeVideos(topic, 'oneshot', branch);
         console.log("✅ Fetched video stats successfully. Sending to Llama 3.1 via Groq...");
         
         // 2. Feed to Llama to categorize
-        const categorizedResult = await categorizeVideosWithLlama(videoTable);
+        const categorizedResult = await categorizeVideosWithLlama(videoTable, topic, 'oneshot', branch);
         
         // 3. Return structured data to frontend
         res.json({
@@ -104,7 +107,8 @@ app.post('/api/login', async (req, res) => {
         }
 
         const [rows] = await pool.execute(
-            "SELECT id, email, fullName, roll FROM users WHERE roll = ? AND password = ?",
+            `SELECT id, email, fullName, university, course, semester, roll, address, linkedin, created_at
+             FROM users WHERE roll = ? AND password = ?`,
             [identifier, password]
         );
 
@@ -115,7 +119,12 @@ app.post('/api/login', async (req, res) => {
             });
         }
 
-        res.json({ success: true, message: "Login successful!", user: rows[0] });
+        res.json({
+            success: true,
+            message: "Login successful!",
+            user: rows[0],
+            token: createSessionToken(rows[0].email)
+        });
     } catch (error) {
         console.error("Login database error:", error);
         res.status(500).json({ success: false, error: "Server error during login." });

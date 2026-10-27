@@ -189,6 +189,10 @@ body {
 
 /* --- Branch / Subject 3D Card --- */
 .branch-card {
+  width: 100%;
+  border: 0;
+  color: inherit;
+  font: inherit;
   background: var(--circle-bg);
   border-radius: 26px;
   padding: 24px 12px;
@@ -304,6 +308,8 @@ body {
 }
 
 .modal-chip {
+  border: 0;
+  font: inherit;
   background: var(--circle-bg);
   padding: 14px;
   border-radius: 18px;
@@ -414,8 +420,16 @@ body {
   color: #d96f27 !important;
 }
 
+.branch-card:focus-visible, .modal-chip:focus-visible, .drawer-links a:focus-visible,
+.menu-btn:focus-visible, .logout-btn:focus-visible, .close-drawer-btn:focus-visible,
+.close-modal-btn:focus-visible {
+  outline: 3px solid var(--orange-main);
+  outline-offset: 3px;
+}
+
 /* --- Responsive Adjustments --- */
 @media (max-width: 520px) {
+  .orb-2 { right: 0; }
   .grid-container {
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
@@ -430,4 +444,15 @@ body {
     height: 44px;
     min-width: 44px;
   }
+
+  .modal-overlay { padding: 12px; }
+  .others-modal { max-height: 88vh; overflow-y: auto; padding: 18px; border-radius: 24px; }
+  .modal-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 360px) {
+  .grid-container { grid-template-columns: 1fr; }
+  .top-header { gap: 8px; }
+  .search-wrapper { padding: 4px 12px; }
+  .search-wrapper input { font-size: 13px; }
 }

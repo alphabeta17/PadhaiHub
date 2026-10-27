@@ -24,7 +24,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="logo-icon"><path d="M11.7 2.805a.75.75 0 0 1 .6 0l9.4 4.7a.75.75 0 0 1 .1.123 1.5 1.5 0 0 1-.1 1.76l-9.4 5.875a.75.75 0 0 1-.6 0l-9.4-5.875A1.5 1.5 0 0 1 2.2 7.63a.75.75 0 0 1 .1-.123l9.4-4.702ZM12 10.41l7.2-4.5L12 2.31 4.8 5.91l7.2 4.5Z"/></svg>
             </div>
             <h1 class="brand-title">PadhaiHub</h1>
-            <p class="brand-subtitle">Complete Your Student Profile</p>
+            <p class="brand-subtitle" id="profileHeading">Student Profile</p>
         </header>
 
         <main class="details-card">
@@ -154,12 +154,23 @@
 
             <!-- Submit Action Row -->
             <div class="action-footer">
-                <button type="submit" class="save-btn" onclick="handleSaveDetails()">Save Details</button>
+                <button type="button" class="save-btn" id="editProfileBtn" onclick="enableProfileEditing()" hidden>Edit Profile</button>
+                <button type="button" class="save-btn" id="saveProfileBtn" onclick="handleSaveDetails()" hidden>Save Details</button>
             </div>
         </main>
     </div>
 
     <script>
+        const profileFields = {
+            name: 'fullName',
+            university: 'university',
+            course: 'course',
+            sem: 'semester',
+            rollno: 'roll',
+            address: 'address',
+            linkedin: 'linkedin'
+        };
+
         function handleGoBack() {
             window.history.back();
         }
@@ -174,11 +185,73 @@
                 errDiv.style.fontWeight = "700";
                 errDiv.style.textAlign = "center";
                 errDiv.style.marginTop = "10px";
+                errDiv.setAttribute('role', 'status');
                 const actionFooter = document.querySelector('.action-footer');
                 actionFooter.parentNode.insertBefore(errDiv, actionFooter);
             }
             errDiv.innerText = message;
+            errDiv.style.color = message === 'Profile updated successfully.' ? '#16803c' : '#d9534f';
             errDiv.style.display = "block";
+        }
+
+        function setProfileValues(profile) {
+            for (const [fieldId, profileKey] of Object.entries(profileFields)) {
+                document.getElementById(fieldId).value = profile[profileKey] || '';
+            }
+        }
+
+        function setEditing(enabled) {
+            for (const fieldId of Object.keys(profileFields)) {
+                document.getElementById(fieldId).readOnly = !enabled;
+            }
+            document.getElementById('editProfileBtn').hidden = enabled;
+            document.getElementById('saveProfileBtn').hidden = !enabled;
+        }
+
+        function enableProfileEditing() {
+            setEditing(true);
+            document.getElementById('profileHeading').textContent = 'Edit Student Profile';
+        }
+
+        async function initializeProfile() {
+            const signupEmail = sessionStorage.getItem('signupEmail');
+            const signupPassword = sessionStorage.getItem('signupPassword');
+            if (signupEmail && signupPassword) {
+                document.getElementById('profileHeading').textContent = 'Complete Your Student Profile';
+                setEditing(true);
+                return;
+            }
+
+            const token = localStorage.getItem('authToken');
+            const cachedProfile = getCachedUserProfile();
+            if (cachedProfile) {
+                setProfileValues(cachedProfile);
+            }
+
+            if (!token) {
+                showInlineError('Please log in to view your profile.');
+                setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                return;
+            }
+
+            setEditing(false);
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Could not load your profile.');
+                }
+
+                setProfileValues(result.user);
+                cacheUserProfile(result.user, token);
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showInlineError(cachedProfile
+                    ? 'Could not refresh from the database. Showing your last saved profile.'
+                    : error.message || 'Could not load your profile from the database.');
+            }
         }
 
         async function handleSaveDetails() {
@@ -190,33 +263,37 @@
             const address = document.getElementById('address').value.trim();
             const linkedin = document.getElementById('linkedin').value.trim();
 
-            const email = localStorage.getItem("userEmail");
-            const password = localStorage.getItem("userPassword");
+            const signupEmail = sessionStorage.getItem('signupEmail');
+            const signupPassword = sessionStorage.getItem('signupPassword');
+            const token = localStorage.getItem('authToken');
+            const isSignup = Boolean(signupEmail && signupPassword);
 
             if (!name || !university || !course) {
                 showInlineError('Please fill out the primary fields (Name, University, Course)');
                 return;
             }
 
-            if (!email || !password) {
-                showInlineError('Session expired. Please log in again.');
-                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+            if (!isSignup && !token) {
+                showInlineError('Your session expired. Please log in again.');
+                setTimeout(() => { window.location.href = 'login.html'; }, 2000);
                 return;
             }
 
-            const saveBtn = document.querySelector('.save-btn');
+            const saveBtn = document.getElementById('saveProfileBtn');
             saveBtn.innerText = "Saving...";
             saveBtn.disabled = true;
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/auth/save-profile`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        email, 
-                        password,
-                        fullName: name, 
-                        university, 
+                const response = await fetch(`${API_BASE_URL}/api/auth/${isSignup ? 'save-profile' : 'profile'}`, {
+                    method: isSignup ? 'POST' : 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && !isSignup ? { Authorization: `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        ...(isSignup ? { email: signupEmail, password: signupPassword } : {}),
+                        fullName: name,
+                        university,
                         course,
                         semester: sem,
                         roll: rollno,
@@ -226,22 +303,33 @@
                 });
 
                 const result = await response.json();
-
-                if (result.success) {
-                    saveBtn.innerText = "Saved!";
-                    window.location.href = 'home.html'; 
-                } else {
-                    saveBtn.innerText = "Save Details";
-                    saveBtn.disabled = false;
-                    showInlineError(result.message || 'Failed to save details.');
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to save details.');
                 }
+
+                cacheUserProfile(result.user, result.token || token);
+                if (isSignup) {
+                    sessionStorage.removeItem('signupEmail');
+                    sessionStorage.removeItem('signupPassword');
+                    window.location.href = 'home.html';
+                    return;
+                }
+
+                setProfileValues(result.user);
+                setEditing(false);
+                document.getElementById('profileHeading').textContent = 'Student Profile';
+                saveBtn.innerText = "Save Details";
+                showInlineError('Profile updated successfully.');
             } catch (error) {
                 console.error('Error saving profile:', error);
                 saveBtn.innerText = "Save Details";
+                showInlineError(error.message || 'Network error. Backend server is unreachable.');
+            } finally {
                 saveBtn.disabled = false;
-                showInlineError('Network error. Backend server is unreachable.');
             }
         }
+
+        initializeProfile();
     </script>
 </body>
 </html>
