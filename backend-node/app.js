@@ -5,7 +5,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.routes.js'; 
 import { fetchYoutubeVideos, categorizeVideosWithLlama } from './services.js';  
-import { initDatabase } from './config/db.js';// Make sure file name case matches exactly
 import { pool, initDatabase } from './config/db.js';
 dotenv.config();
 
@@ -57,15 +56,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(pagesPath, 'index.html'));
 });
 
-// Server Listening
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, async () => {
-    console.log(`Server is running live on http://localhost:${PORT}`);
-    // Initialize MySQL Tables and Seed Data
-    await initDatabase();
-});
-
-
 // AI Categorization Route
 app.get('/api/categorize/:topic', async (req, res) => {
     try {
@@ -95,34 +85,56 @@ app.get('/api/categorize/:topic', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { role, identifier, password } = req.body;
-        
-        let query = "";
-        let values = [];
 
-        if (role === 'student') {
-            // Maan lijiye aapke users table mein roll_no, password aur role columns hain
-            query = "SELECT * FROM users WHERE roll_no = ? AND password = ? AND role = 'student'";
-            values = [identifier, password];
-        } else if (role === 'faculty') {
-            query = "SELECT * FROM users WHERE faculty_id = ? AND password = ? AND role = 'faculty'";
-            values = [identifier, password];
-        } else if (role === 'admin') {
-            query = "SELECT * FROM users WHERE admin_key = ? AND role = 'admin'";
-            values = [identifier]; // Admin ke liye sirf key/password
-        } else if (role === 'visitor') {
+        if (role === 'visitor') {
             return res.json({ success: true, message: "Visitor access granted." });
         }
 
-        const [rows] = await db.execute(query, values);
-
-        if (rows.length > 0 || role === 'visitor') {
-            res.json({ success: true, message: "Login successful!", user: rows[0] });
-        } else {
-            res.status(401).json({ success: false, error: "Invalid credentials or user not found." });
+        if (role !== 'student') {
+            return res.status(501).json({
+                success: false,
+                error: "Faculty and admin login are not supported by the current users schema."
+            });
         }
 
+        if (!identifier || !password) {
+            return res.status(400).json({
+                success: false,
+                error: "Roll number and password are required."
+            });
+        }
+
+        const [rows] = await pool.execute(
+            "SELECT id, email, fullName, roll FROM users WHERE roll = ? AND password = ?",
+            [identifier, password]
+        );
+
+        if (rows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                error: "Invalid credentials or user not found."
+            });
+        }
+
+        res.json({ success: true, message: "Login successful!", user: rows[0] });
     } catch (error) {
         console.error("Login database error:", error);
         res.status(500).json({ success: false, error: "Server error during login." });
     }
+});
+
+const PORT = process.env.PORT || 5000;
+
+async function startServer() {
+    await initDatabase();
+
+    app.listen(PORT, () => {
+        console.log(`Server is running live on http://localhost:${PORT}`);
+    });
+}
+
+startServer().catch(async (error) => {
+    console.error('Server startup failed:', error);
+    await pool.end();
+    process.exitCode = 1;
 });

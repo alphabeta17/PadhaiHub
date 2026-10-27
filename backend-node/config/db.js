@@ -17,8 +17,10 @@ export const pool = mysql.createPool({
 });
 
 export async function initDatabase() {
+    let connection;
+
     try {
-        const connection = await pool.getConnection();
+        connection = await pool.getConnection();
         console.log('⚡ Connected to Aiven MySQL Database Successfully!');
 
         // 1. Users Table Creation (Safe without drop)
@@ -41,8 +43,10 @@ export async function initDatabase() {
         // Safe check: Agar purani table mein password column nahi hai toh add kar do
         try {
             await connection.query(`ALTER TABLE users ADD COLUMN password VARCHAR(255) DEFAULT 'default123'`);
-        } catch (e) {
-            // Column pehle se exist karta hai toh ignore karega
+        } catch (error) {
+            if (error.code !== 'ER_DUP_FIELDNAME') {
+                throw error;
+            }
         }
 
         // 2. Courses Table
@@ -92,9 +96,10 @@ export async function initDatabase() {
             `);
             console.log('🌱 Sample Data Seeded into Database!');
         }
-
-        connection.release();
     } catch (error) {
         console.error('❌ Error initializing database tables:', error.message);
+        throw error;
+    } finally {
+        connection?.release();
     }
 }
