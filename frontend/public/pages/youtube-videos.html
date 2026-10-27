@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PadhaiHub - AI Video Player & Ranking</title>
+    <script src="api-config.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -181,7 +182,7 @@
 
     try {
         // Updated fetch URL including both subject and category parameters to match backend server.js
-        const response = await fetch(`http://localhost:5000/api/categorize/${encodeURIComponent(subject)}/${encodeURIComponent(category)}`);
+        const response = await fetch(`${API_BASE_URL}/api/categorize/${encodeURIComponent(subject)}/${encodeURIComponent(category)}`);
         const result = await response.json();
 
         if (result.success) {
@@ -201,7 +202,7 @@
         }
     } catch (err) {
         console.error("Connection Error:", err);
-        alert("Network error: Could not reach backend server at http://localhost:5000.");
+        alert("Network error: Could not reach the backend server.");
     } finally {
         document.getElementById('loadingOverlay').style.display = 'none';
     }

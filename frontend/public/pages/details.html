@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PadhaiHub - User Details</title>
+    <script src="api-config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -208,7 +209,7 @@
             saveBtn.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/save-profile', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/save-profile`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 

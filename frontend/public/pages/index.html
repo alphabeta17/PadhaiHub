@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PadhaiHub - Signup / Login</title>
+    <script src="api-config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -130,7 +131,7 @@
             btn.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/send-otp', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
@@ -165,7 +166,7 @@
             if (!password || password.length < 6) { showInlineError('passwordError', 'Password must be at least 6 characters.'); return; }
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, otp })
